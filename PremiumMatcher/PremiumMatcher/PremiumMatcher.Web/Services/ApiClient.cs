@@ -23,32 +23,33 @@ public class ApiClient
     }
 
     // DTOs mirrored from API
-    public record SearchRequest(
-        string? FirstName,
-        string? MiddleName,
-        string? LastName,
-        string? TLFirstName,
-        string? TLMiddleName,
-        string? TLLastName,
-        string? Gender,
-        string? BDay,
-        string? BMonth,
-        string? BYear,
-        string? Village,
-        string? SubVillage,
-        bool UseFirstName,
-        bool UseMiddleName,
-        bool UseLastName,
-        bool UseTLFirstName,
-        bool UseTLMiddleName,
-        bool UseTLLastName,
-        bool UseGender,
-        bool UseBDay,
-        bool UseBMonth,
-        bool UseBYear,
-        bool UseVillage,
-        bool UseSubVillage
-    );
+    public class SearchRequest
+    {
+        public string? FirstName { get; set; }
+        public string? MiddleName { get; set; }
+        public string? LastName { get; set; }
+        public string? TLFirstName { get; set; }
+        public string? TLMiddleName { get; set; }
+        public string? TLLastName { get; set; }
+        public string? Gender { get; set; }
+        public string? BDay { get; set; }
+        public string? BMonth { get; set; }
+        public string? BYear { get; set; }
+        public string? Village { get; set; }
+        public string? SubVillage { get; set; }
+        public bool UseFirstName { get; set; } = true;
+        public bool UseMiddleName { get; set; } = false;
+        public bool UseLastName { get; set; } = true;
+        public bool UseTLFirstName { get; set; } = false;
+        public bool UseTLMiddleName { get; set; } = false;
+        public bool UseTLLastName { get; set; } = false;
+        public bool UseGender { get; set; } = false;
+        public bool UseBDay { get; set; } = false;
+        public bool UseBMonth { get; set; } = false;
+        public bool UseBYear { get; set; } = true;
+        public bool UseVillage { get; set; } = false;
+        public bool UseSubVillage { get; set; } = false;
+    }
 
     public record Candidate(
         string dssId,
@@ -65,24 +66,25 @@ public class ApiClient
         string? gender
     );
 
-    public record AssignMatchRequest(
-        string RecordNo,
-        string Facility,
-        string? UniqueCTCIDNumber,
-        string? TgrFormNumber,
-        string? FileRef,
-        string? CtcInfant,
-        string? UniqueHTC,
-        string? UniqueANC,
-        string? AncInfant,
-        string? HeidInfant,
-        string SearchCriteria,
-        string DssId,
-        double Score,
-        int RankGap,
-        int RankNoGap,
-        int RowNumber
-    );
+    public class AssignMatchRequest
+    {
+        public string RecordNo { get; set; } = string.Empty;
+        public string Facility { get; set; } = string.Empty;
+        public string? UniqueCTCIDNumber { get; set; }
+        public string? TgrFormNumber { get; set; }
+        public string? FileRef { get; set; }
+        public string? CtcInfant { get; set; }
+        public string? UniqueHTC { get; set; }
+        public string? UniqueANC { get; set; }
+        public string? AncInfant { get; set; }
+        public string? HeidInfant { get; set; }
+        public string SearchCriteria { get; set; } = string.Empty;
+        public string DssId { get; set; } = string.Empty;
+        public double Score { get; set; }
+        public int RankGap { get; set; }
+        public int RankNoGap { get; set; }
+        public int RowNumber { get; set; }
+    }
 
     public record ExistsResponse(bool exists);
     public record StatusRequest(string Facility, string? UniqueCTCIDNumber, string? TgrFormNumber, string? FileRef, string? CtcInfant, string? UniqueHTC, string? UniqueANC, string? AncInfant, string? HeidInfant);
@@ -126,4 +128,3 @@ public class ApiClient
         return await resp.Content.ReadFromJsonAsync<StatusResponse>();
     }
 }
-

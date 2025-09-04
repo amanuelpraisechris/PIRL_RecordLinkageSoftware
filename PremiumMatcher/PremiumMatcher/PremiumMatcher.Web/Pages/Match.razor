@@ -115,10 +115,10 @@
 }
 
 @code {
-    private ApiClient.SearchRequest search = new("", "", "", "", "", "", "", "", "", "", "", "", true, false, true, false, false, false, false, false, false, true, false, false);
+    private ApiClient.SearchRequest search = new();
     private List<ApiClient.Candidate>? candidates;
     private ApiClient.Candidate? selected;
-    private ApiClient.AssignMatchRequest assign = new("", "", null, null, null, null, null, null, null, null, "", "", 0, 0, 0, 0);
+    private ApiClient.AssignMatchRequest assign = new();
     private bool loading = false;
     private bool assigning = false;
     private string? error;
@@ -156,15 +156,12 @@
     {
         if (selected is null) return;
         var criteria = BuildSearchCriteria();
-        assign = assign with
-        {
-            DssId = selected.dssId,
-            Score = selected.score,
-            RankGap = selected.rankGap,
-            RankNoGap = selected.rankNoGap,
-            RowNumber = selected.rowNumber,
-            SearchCriteria = criteria
-        };
+        assign.DssId = selected.dssId;
+        assign.Score = selected.score;
+        assign.RankGap = selected.rankGap;
+        assign.RankNoGap = selected.rankNoGap;
+        assign.RowNumber = selected.rowNumber;
+        assign.SearchCriteria = criteria;
     }
 
     private string BuildSearchCriteria()
@@ -218,4 +215,3 @@
         finally { assigning = false; }
     }
 }
-

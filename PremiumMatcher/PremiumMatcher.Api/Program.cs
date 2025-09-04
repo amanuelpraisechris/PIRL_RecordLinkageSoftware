@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
 // Configuration: expects SUPABASE_DB_URL (full Postgres connection string)
 var supabaseConnString = Environment.GetEnvironmentVariable("SUPABASE_DB_URL")
     ?? builder.Configuration["Supabase:ConnectionString"]
-    ?? "";
+    ?? string.Empty;
 
 if (string.IsNullOrWhiteSpace(supabaseConnString))
 {
@@ -35,70 +35,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowDev");
 
-// DTOs
-record SearchRequest(
-    string? FirstName,
-    string? MiddleName,
-    string? LastName,
-    string? TLFirstName,
-    string? TLMiddleName,
-    string? TLLastName,
-    string? Gender,
-    string? BDay,
-    string? BMonth,
-    string? BYear,
-    string? Village,
-    string? SubVillage,
-    bool UseFirstName,
-    bool UseMiddleName,
-    bool UseLastName,
-    bool UseTLFirstName,
-    bool UseTLMiddleName,
-    bool UseTLLastName,
-    bool UseGender,
-    bool UseBDay,
-    bool UseBMonth,
-    bool UseBYear,
-    bool UseVillage,
-    bool UseSubVillage
-);
-
-record Candidate(
-    string DssId,
-    string? BirthYear,
-    double Score,
-    int RankNoGap,
-    int RankGap,
-    int RowNumber,
-    double NameScore,
-    string? Location,
-    string? FirstName,
-    string? MiddleName,
-    string? LastName,
-    string? Gender
-);
-
-record AssignMatchRequest(
-    string RecordNo,
-    string Facility,
-    string? UniqueCTCIDNumber,
-    string? TgrFormNumber,
-    string? FileRef,
-    string? CtcInfant,
-    string? UniqueHTC,
-    string? UniqueANC,
-    string? AncInfant,
-    string? HeidInfant,
-    string SearchCriteria,
-    string DssId,
-    double Score,
-    int RankGap,
-    int RankNoGap,
-    int RowNumber
-);
-
-record MatchStatusRequest(string Facility, string? UniqueCTCIDNumber, string? TgrFormNumber, string? FileRef, string? CtcInfant, string? UniqueHTC, string? UniqueANC, string? AncInfant, string? HeidInfant);
-record MatchStatusResponse(string Status, string? Comment);
+// DTOs are declared after Run() to satisfy top-level statement ordering
 
 NpgsqlDataSource? dataSource = null;
 if (!string.IsNullOrWhiteSpace(supabaseConnString))
@@ -113,7 +50,6 @@ app.MapPost("/api/search", async (SearchRequest req) =>
 
     await using var conn = await dataSource.OpenConnectionAsync();
 
-    // Expect a SQL function: public.search_candidates(...)
     const string sql = @"
         select * from public.search_candidates(
             _first_name => @first_name,
@@ -302,3 +238,68 @@ app.MapPost("/api/match-status", async (MatchStatusRequest req) =>
 });
 
 app.Run();
+
+// DTOs
+record SearchRequest(
+    string? FirstName,
+    string? MiddleName,
+    string? LastName,
+    string? TLFirstName,
+    string? TLMiddleName,
+    string? TLLastName,
+    string? Gender,
+    string? BDay,
+    string? BMonth,
+    string? BYear,
+    string? Village,
+    string? SubVillage,
+    bool UseFirstName,
+    bool UseMiddleName,
+    bool UseLastName,
+    bool UseTLFirstName,
+    bool UseTLMiddleName,
+    bool UseTLLastName,
+    bool UseGender,
+    bool UseBDay,
+    bool UseBMonth,
+    bool UseBYear,
+    bool UseVillage,
+    bool UseSubVillage
+);
+
+record Candidate(
+    string DssId,
+    string? BirthYear,
+    double Score,
+    int RankNoGap,
+    int RankGap,
+    int RowNumber,
+    double NameScore,
+    string? Location,
+    string? FirstName,
+    string? MiddleName,
+    string? LastName,
+    string? Gender
+);
+
+record AssignMatchRequest(
+    string RecordNo,
+    string Facility,
+    string? UniqueCTCIDNumber,
+    string? TgrFormNumber,
+    string? FileRef,
+    string? CtcInfant,
+    string? UniqueHTC,
+    string? UniqueANC,
+    string? AncInfant,
+    string? HeidInfant,
+    string SearchCriteria,
+    string DssId,
+    double Score,
+    int RankGap,
+    int RankNoGap,
+    int RowNumber
+);
+
+record MatchStatusRequest(string Facility, string? UniqueCTCIDNumber, string? TgrFormNumber, string? FileRef, string? CtcInfant, string? UniqueHTC, string? UniqueANC, string? AncInfant, string? HeidInfant);
+record MatchStatusResponse(string Status, string? Comment);
