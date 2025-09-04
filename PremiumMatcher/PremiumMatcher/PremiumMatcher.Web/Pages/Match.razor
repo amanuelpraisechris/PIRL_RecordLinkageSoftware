@@ -1,0 +1,221 @@
+@page "/match"
+@using PremiumMatcher.Web.Services
+@inject ApiClient Api
+@inject AppConfig AppCfg
+
+<h3>Record Matching</h3>
+
+<EditForm Model="search" OnValidSubmit="RunSearch">
+    <DataAnnotationsValidator />
+    <div class="row g-3">
+        <div class="col-md-3"><InputText class="form-control" @bind-Value="search.FirstName" placeholder="First name" /></div>
+        <div class="col-md-3"><InputText class="form-control" @bind-Value="search.MiddleName" placeholder="Middle name" /></div>
+        <div class="col-md-3"><InputText class="form-control" @bind-Value="search.LastName" placeholder="Last name" /></div>
+        <div class="col-md-3">
+            <InputSelect class="form-select" @bind-Value="search.Gender">
+                <option value="">Gender</option>
+                <option value="M">M</option>
+                <option value="F">F</option>
+            </InputSelect>
+        </div>
+        <div class="col-md-2"><InputText class="form-control" @bind-Value="search.BDay" placeholder="DD" /></div>
+        <div class="col-md-2"><InputText class="form-control" @bind-Value="search.BMonth" placeholder="MM" /></div>
+        <div class="col-md-2"><InputText class="form-control" @bind-Value="search.BYear" placeholder="YYYY" /></div>
+        <div class="col-md-3"><InputText class="form-control" @bind-Value="search.Village" placeholder="Village" /></div>
+        <div class="col-md-3"><InputText class="form-control" @bind-Value="search.SubVillage" placeholder="Sub-village" /></div>
+    </div>
+    <div class="form-check form-check-inline mt-3">
+        <InputCheckbox class="form-check-input" @bind-Value="search.UseFirstName" /> <label class="form-check-label">First</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <InputCheckbox class="form-check-input" @bind-Value="search.UseMiddleName" /> <label class="form-check-label">Middle</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <InputCheckbox class="form-check-input" @bind-Value="search.UseLastName" /> <label class="form-check-label">Last</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <InputCheckbox class="form-check-input" @bind-Value="search.UseGender" /> <label class="form-check-label">Gender</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <InputCheckbox class="form-check-input" @bind-Value="search.UseBYear" /> <label class="form-check-label">Birth Year</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <InputCheckbox class="form-check-input" @bind-Value="search.UseVillage" /> <label class="form-check-label">Village</label>
+    </div>
+
+    <div class="mt-3">
+        <button class="btn btn-primary" type="submit" disabled="@loading">@("Search" + (loading ? "…" : ""))</button>
+    </div>
+</EditForm>
+
+@if (error is not null)
+{
+    <div class="alert alert-danger mt-3">@error</div>
+}
+
+@if (candidates?.Any() == true)
+{
+    <div class="table-responsive mt-4">
+        <table class="table table-sm align-middle">
+            <thead>
+                <tr>
+                    <th>DSS ID</th>
+                    <th>Score</th>
+                    <th>Name Score</th>
+                    <th>Birth Year</th>
+                    <th>Location</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in candidates!.OrderByDescending(x => x.score))
+                {
+                    <tr class="@(selected?.dssId == c.dssId ? "table-primary" : string.Empty)">
+                        <td>@c.dssId</td>
+                        <td>@c.score.ToString("0.000") (#@c.rankNoGap)</td>
+                        <td>@c.nameScore.ToString("0.000")</td>
+                        <td>@c.birthYear</td>
+                        <td>@c.location</td>
+                        <td>
+                            <button class="btn btn-outline-secondary btn-sm" @onclick="(() => SelectCandidate(c))">Select</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (selected is not null)
+{
+    <hr />
+    <h5>Assign Match</h5>
+    @if (warnText is not null)
+    {
+        <div class="alert alert-warning">@warnText</div>
+    }
+    <EditForm Model="assign" OnValidSubmit="DoAssign">
+        <div class="row g-3">
+            <div class="col-md-3"><InputText class="form-control" @bind-Value="assign.Facility" placeholder="Facility" /></div>
+            <div class="col-md-3"><InputText class="form-control" @bind-Value="assign.RecordNo" placeholder="Record No" /></div>
+            <div class="col-md-3"><InputText class="form-control" @bind-Value="assign.UniqueCTCIDNumber" placeholder="Unique CTC ID" /></div>
+            <div class="col-md-3"><InputText class="form-control" @bind-Value="assign.FileRef" placeholder="File Ref" /></div>
+            <div class="col-md-3"><InputText class="form-control" @bind-Value="assign.TgrFormNumber" placeholder="TGR Form Number" /></div>
+            <div class="col-md-3"><InputText class="form-control" @bind-Value="assign.UniqueHTC" placeholder="Unique HTC" /></div>
+            <div class="col-md-3"><InputText class="form-control" @bind-Value="assign.UniqueANC" placeholder="Unique ANC" /></div>
+        </div>
+        <div class="mt-3">
+            <button class="btn btn-success" type="submit" disabled="@assigning">@("Assign Match" + (assigning ? "…" : ""))</button>
+        </div>
+        @if (assignResult is not null)
+        {
+            <div class="alert alert-info mt-2">@assignResult</div>
+        }
+    </EditForm>
+}
+
+@code {
+    private ApiClient.SearchRequest search = new("", "", "", "", "", "", "", "", "", "", "", "", true, false, true, false, false, false, false, false, false, true, false, false);
+    private List<ApiClient.Candidate>? candidates;
+    private ApiClient.Candidate? selected;
+    private ApiClient.AssignMatchRequest assign = new("", "", null, null, null, null, null, null, null, null, "", "", 0, 0, 0, 0);
+    private bool loading = false;
+    private bool assigning = false;
+    private string? error;
+    private string? warnText;
+    private string? assignResult;
+    private PremiumMatcher.Web.Services.AppSettings? cfg;
+
+    protected override async Task OnInitializedAsync()
+    {
+        cfg = await AppCfg.GetAsync();
+    }
+
+    private async Task RunSearch()
+    {
+        loading = true; error = null; candidates = null; selected = null; warnText = null; assignResult = null;
+        try
+        {
+            candidates = await Api.SearchAsync(search);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally { loading = false; }
+    }
+
+    private void SelectCandidate(ApiClient.Candidate c)
+    {
+        selected = c;
+        BuildAssignModel();
+        ComputeWarnings();
+    }
+
+    private void BuildAssignModel()
+    {
+        if (selected is null) return;
+        var criteria = BuildSearchCriteria();
+        assign = assign with
+        {
+            DssId = selected.dssId,
+            Score = selected.score,
+            RankGap = selected.rankGap,
+            RankNoGap = selected.rankNoGap,
+            RowNumber = selected.rowNumber,
+            SearchCriteria = criteria
+        };
+    }
+
+    private string BuildSearchCriteria()
+    {
+        var parts = new List<string>();
+        if (search.UseFirstName) parts.Add("First Name");
+        if (search.UseMiddleName) parts.Add("Middle Name");
+        if (search.UseLastName) parts.Add("Last Name");
+        if (search.UseGender) parts.Add("Sex");
+        if (search.UseBYear) parts.Add("BYear");
+        if (search.UseVillage) parts.Add("Village");
+        if (search.UseSubVillage) parts.Add("Sub Village");
+        return string.Join(", ", parts);
+    }
+
+    private void ComputeWarnings()
+    {
+        warnText = null;
+        if (selected is null || cfg is null) return;
+        if (selected.nameScore <= cfg.LowNameScoreThreshold)
+        {
+            warnText = (warnText is null ? string.Empty : warnText + " ") + "Low Name Score – confirm before proceeding.";
+        }
+        if (int.TryParse(selected.birthYear ?? "", out var by) && int.TryParse(search.BYear ?? "", out var sy))
+        {
+            if (Math.Abs(by - sy) > cfg.BirthYearGapWarn)
+                warnText = (warnText is null ? string.Empty : warnText + " ") + "Birth year gap is large.";
+        }
+    }
+
+    private async Task DoAssign()
+    {
+        if (selected is null) return;
+        assigning = true; assignResult = null; error = null;
+        try
+        {
+            var existsReq = new ApiClient.StatusRequest(assign.Facility, assign.UniqueCTCIDNumber, assign.TgrFormNumber, assign.FileRef, assign.CtcInfant, assign.UniqueHTC, assign.UniqueANC, assign.AncInfant, assign.HeidInfant);
+            var exists = await Api.ExistsAsync(existsReq);
+            if (exists)
+            {
+                assignResult = "This Clinic ID set already exists for a match.";
+                return;
+            }
+            var id = await Api.AssignMatchAsync(assign);
+            assignResult = $"Match assigned (id={id}).";
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally { assigning = false; }
+    }
+}
+

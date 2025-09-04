@@ -6,6 +6,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 
+// Dev CORS to allow the Web frontend during local development
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowDev",
+        policy => policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
 // Configuration: expects SUPABASE_DB_URL (full Postgres connection string)
 var supabaseConnString = Environment.GetEnvironmentVariable("SUPABASE_DB_URL")
     ?? builder.Configuration["Supabase:ConnectionString"]
@@ -22,6 +32,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseCors("AllowDev");
 
 // DTOs
 record SearchRequest(
