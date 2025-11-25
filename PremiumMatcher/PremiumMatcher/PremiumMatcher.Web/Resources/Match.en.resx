@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Page Title -->
+  <data name="RecordMatching" xml:space="preserve">
+    <value>Record Matching</value>
+  </data>
+
+  <!-- Search Form -->
+  <data name="FirstName" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="MiddleName" xml:space="preserve">
+    <value>Middle Name / Father's Name</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last Name / Grandfather's Name</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>Gender</value>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>Male</value>
+  </data>
+  <data name="Female" xml:space="preserve">
+    <value>Female</value>
+  </data>
+  <data name="BirthDay" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="BirthMonth" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="BirthYear" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="Region" xml:space="preserve">
+    <value>Region</value>
+  </data>
+  <data name="Woreda" xml:space="preserve">
+    <value>Woreda</value>
+  </data>
+  <data name="Kebele" xml:space="preserve">
+    <value>Kebele</value>
+  </data>
+  <data name="Gott" xml:space="preserve">
+    <value>Gott / Village</value>
+  </data>
+  <data name="CalendarType" xml:space="preserve">
+    <value>Calendar</value>
+  </data>
+  <data name="Gregorian" xml:space="preserve">
+    <value>Gregorian</value>
+  </data>
+  <data name="Ethiopian" xml:space="preserve">
+    <value>Ethiopian</value>
+  </data>
+
+  <!-- Search Criteria Toggles -->
+  <data name="UseFirstName" xml:space="preserve">
+    <value>Use First Name</value>
+  </data>
+  <data name="UseMiddleName" xml:space="preserve">
+    <value>Use Father's Name</value>
+  </data>
+  <data name="UseLastName" xml:space="preserve">
+    <value>Use Last Name</value>
+  </data>
+  <data name="UseGender" xml:space="preserve">
+    <value>Use Gender</value>
+  </data>
+  <data name="UseBirthYear" xml:space="preserve">
+    <value>Use Birth Year</value>
+  </data>
+  <data name="UseKebele" xml:space="preserve">
+    <value>Use Kebele</value>
+  </data>
+
+  <!-- Buttons -->
+  <data name="SearchButton" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Searching…</value>
+  </data>
+  <data name="AssignMatch" xml:space="preserve">
+    <value>Assign Match</value>
+  </data>
+  <data name="Assigning" xml:space="preserve">
+    <value>Assigning…</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+
+  <!-- Results Table -->
+  <data name="DssId" xml:space="preserve">
+    <value>DSS ID</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="NameScore" xml:space="preserve">
+    <value>Name Score</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>Rank</value>
+  </data>
+
+  <!-- Match Assignment -->
+  <data name="AssignMatchTitle" xml:space="preserve">
+    <value>Assign Match</value>
+  </data>
+  <data name="Facility" xml:space="preserve">
+    <value>Health Facility</value>
+  </data>
+  <data name="RecordNo" xml:space="preserve">
+    <value>Record Number</value>
+  </data>
+  <data name="EmrNumber" xml:space="preserve">
+    <value>EMR Number</value>
+  </data>
+  <data name="ArtNumber" xml:space="preserve">
+    <value>ART Number</value>
+  </data>
+  <data name="SmartCareId" xml:space="preserve">
+    <value>SmartCare ID</value>
+  </data>
+  <data name="TbNumber" xml:space="preserve">
+    <value>TB Registration Number</value>
+  </data>
+  <data name="PmtctId" xml:space="preserve">
+    <value>PMTCT ID</value>
+  </data>
+
+  <!-- Warnings -->
+  <data name="LowNameScoreWarning" xml:space="preserve">
+    <value>Low Name Score – confirm before proceeding.</value>
+  </data>
+  <data name="BirthYearGapWarning" xml:space="preserve">
+    <value>Birth year gap is large.</value>
+  </data>
+  <data name="DuplicateWarning" xml:space="preserve">
+    <value>This Clinic ID set already exists for a match.</value>
+  </data>
+
+  <!-- Success Messages -->
+  <data name="MatchAssigned" xml:space="preserve">
+    <value>Match assigned (id={0}).</value>
+  </data>
+
+  <!-- Error Messages -->
+  <data name="ErrorOccurred" xml:space="preserve">
+    <value>An error occurred: {0}</value>
+  </data>
+</root>

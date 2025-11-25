@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Page Title -->
+  <data name="RecordMatching" xml:space="preserve">
+    <value>መዝገብ ማመሳሰል</value>
+  </data>
+
+  <!-- Search Form -->
+  <data name="FirstName" xml:space="preserve">
+    <value>የመጀመሪያ ስም</value>
+  </data>
+  <data name="MiddleName" xml:space="preserve">
+    <value>የአባት ስም</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>የአያት ስም</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>ጾታ</value>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>ወንድ</value>
+  </data>
+  <data name="Female" xml:space="preserve">
+    <value>ሴት</value>
+  </data>
+  <data name="BirthDay" xml:space="preserve">
+    <value>ቀን</value>
+  </data>
+  <data name="BirthMonth" xml:space="preserve">
+    <value>ወር</value>
+  </data>
+  <data name="BirthYear" xml:space="preserve">
+    <value>አመት</value>
+  </data>
+  <data name="Region" xml:space="preserve">
+    <value>ክልል</value>
+  </data>
+  <data name="Woreda" xml:space="preserve">
+    <value>ወረዳ</value>
+  </data>
+  <data name="Kebele" xml:space="preserve">
+    <value>ቀበሌ</value>
+  </data>
+  <data name="Gott" xml:space="preserve">
+    <value>ጎጥ / መንደር</value>
+  </data>
+  <data name="CalendarType" xml:space="preserve">
+    <value>የቀን መቁጠሪያ</value>
+  </data>
+  <data name="Gregorian" xml:space="preserve">
+    <value>ግሪጎሪያን</value>
+  </data>
+  <data name="Ethiopian" xml:space="preserve">
+    <value>የኢትዮጵያ ዘመን</value>
+  </data>
+
+  <!-- Search Criteria Toggles -->
+  <data name="UseFirstName" xml:space="preserve">
+    <value>የመጀመሪያ ስም ይጠቀሙ</value>
+  </data>
+  <data name="UseMiddleName" xml:space="preserve">
+    <value>የአባት ስም ይጠቀሙ</value>
+  </data>
+  <data name="UseLastName" xml:space="preserve">
+    <value>የአያት ስም ይጠቀሙ</value>
+  </data>
+  <data name="UseGender" xml:space="preserve">
+    <value>ጾታ ይጠቀሙ</value>
+  </data>
+  <data name="UseBirthYear" xml:space="preserve">
+    <value>የልደት አመት ይጠቀሙ</value>
+  </data>
+  <data name="UseKebele" xml:space="preserve">
+    <value>ቀበሌ ይጠቀሙ</value>
+  </data>
+
+  <!-- Buttons -->
+  <data name="SearchButton" xml:space="preserve">
+    <value>ፈልግ</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>በመፈለግ ላይ…</value>
+  </data>
+  <data name="AssignMatch" xml:space="preserve">
+    <value>ግ�ኝትን ይመድቡ</value>
+  </data>
+  <data name="Assigning" xml:space="preserve">
+    <value>በመመደብ ላይ…</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>ይምረጡ</value>
+  </data>
+
+  <!-- Results Table -->
+  <data name="DssId" xml:space="preserve">
+    <value>የDSS መለያ</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>ውጤት</value>
+  </data>
+  <data name="NameScore" xml:space="preserve">
+    <value>የስም ውጤት</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>አድራሻ</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>ደረጃ</value>
+  </data>
+
+  <!-- Match Assignment -->
+  <data name="AssignMatchTitle" xml:space="preserve">
+    <value>ግጥሚያ ይመድቡ</value>
+  </data>
+  <data name="Facility" xml:space="preserve">
+    <value>የጤና ተቋም</value>
+  </data>
+  <data name="RecordNo" xml:space="preserve">
+    <value>የመዝገብ ቁጥር</value>
+  </data>
+  <data name="EmrNumber" xml:space="preserve">
+    <value>የEMR ቁጥር</value>
+  </data>
+  <data name="ArtNumber" xml:space="preserve">
+    <value>የART ቁጥር</value>
+  </data>
+  <data name="SmartCareId" xml:space="preserve">
+    <value>የስማርትካር መለያ</value>
+  </data>
+  <data name="TbNumber" xml:space="preserve">
+    <value>የሳንባ ነቀርሳ ምዝገባ ቁጥር</value>
+  </data>
+  <data name="PmtctId" xml:space="preserve">
+    <value>የPMTCT መለያ</value>
+  </data>
+
+  <!-- Warnings -->
+  <data name="LowNameScoreWarning" xml:space="preserve">
+    <value>ዝቅተኛ የስም ውጤት - ከመቀጠልዎ በፊት ያረጋግጡ።</value>
+  </data>
+  <data name="BirthYearGapWarning" xml:space="preserve">
+    <value>የልደት አመት ልዩነት ትልቅ ነው።</value>
+  </data>
+  <data name="DuplicateWarning" xml:space="preserve">
+    <value>ይህ የክሊኒክ መለያ ስብስብ ለግጥሚያ ቀድሞውኑ አለ።</value>
+  </data>
+
+  <!-- Success Messages -->
+  <data name="MatchAssigned" xml:space="preserve">
+    <value>ግጥሚያ ተመድቧል (መለያ={0})።</value>
+  </data>
+
+  <!-- Error Messages -->
+  <data name="ErrorOccurred" xml:space="preserve">
+    <value>ስህተት ተፈጥሯል: {0}</value>
+  </data>
+</root>
