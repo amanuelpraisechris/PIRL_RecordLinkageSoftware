@@ -1,4 +1,16 @@
--- Search function inspired by PIRL’s parameter set
+-- Search function inspired by PIRL's parameter set
+--
+-- FIXES APPLIED (2025-11-25):
+-- 1. Birth date matching: Fixed sim_bday and sim_bmonth to compare actual birth_day/birth_month
+--    instead of incorrectly checking q.gender field
+-- 2. Scoring weights: Recalibrated to sum to exactly 1.0 (was 1.55 due to double-counting name components)
+--    New weight distribution:
+--      - Original names (first/middle/last): 60%
+--      - Transliterated names: 5%
+--      - Gender: 10%
+--      - Birth date (day/month/year): 15%
+--      - Location (village/subvillage): 10%
+--    Total: 100%
 
 create or replace function public.search_candidates(
     _first_name text default null,
@@ -71,8 +83,8 @@ with q as (
     (case when _use_tl_middle_name then similarity(unaccent(coalesce(_tl_middle_name,'')), unaccent(coalesce(split_part(q.tlnm,' ',2)))) else 0 end) as sim_tlmn,
     (case when _use_tl_last_name then similarity(unaccent(coalesce(_tl_last_name,'')), unaccent(coalesce(split_part(q.tlnm,' ',3)))) else 0 end) as sim_tlln,
     (case when _use_gender and _gender is not null and q.gender is not null and lower(_gender)=lower(q.gender) then 1.0 else 0 end) as sim_gender,
-    (case when _use_bday and _bday is not null and q.gender is not null then 0.1 else 0 end) as sim_bday, -- placeholder weight
-    (case when _use_bmonth and _bmonth is not null and q.gender is not null then 0.1 else 0 end) as sim_bmonth, -- placeholder weight
+    (case when _use_bday and _bday is not null and q.birth_day is not null and _bday = q.birth_day then 1.0 else 0 end) as sim_bday,
+    (case when _use_bmonth and _bmonth is not null and q.birth_month is not null and _bmonth = q.birth_month then 1.0 else 0 end) as sim_bmonth,
     (case when _use_byear and _byear is not null and q.birth_year is not null then greatest(0, 1 - (abs(coalesce(_byear,'0')::int - coalesce(q.birth_year,'0')::int)::numeric / 10))::double precision else 0 end) as sim_byear,
     (case when _use_village and _village is not null then similarity(unaccent(_village), unaccent(coalesce(q.location,''))) else 0 end) as sim_village,
     (case when _use_subvillage and _subvillage is not null then similarity(unaccent(_subvillage), unaccent(coalesce(q.location,''))) else 0 end) as sim_subvillage,
@@ -82,21 +94,23 @@ with q as (
 select
   dss_id,
   birth_year,
-  -- Weighted score (tune weights as needed)
+  -- Weighted score (sums to 1.0)
+  -- Component-based approach for precision matching
   (
-    0.35*sim_fn + 0.15*sim_mn + 0.35*sim_ln +
-    0.05*sim_tlfn + 0.05*sim_tlmn + 0.05*sim_tlln +
-    0.10*sim_gender + 0.10*sim_byear + 0.05*sim_village + 0.05*sim_subvillage +
-    0.25*name_score
+    0.25*sim_fn + 0.10*sim_mn + 0.25*sim_ln +              -- Original names: 60%
+    0.02*sim_tlfn + 0.01*sim_tlmn + 0.02*sim_tlln +        -- Transliterated: 5%
+    0.10*sim_gender +                                       -- Gender: 10%
+    0.03*sim_bday + 0.03*sim_bmonth + 0.09*sim_byear +     -- Birth date: 15%
+    0.05*sim_village + 0.05*sim_subvillage                  -- Location: 10%
   ) as score,
   dense_rank() over (order by (
-    0.35*sim_fn + 0.15*sim_mn + 0.35*sim_ln + 0.05*sim_tlfn + 0.05*sim_tlmn + 0.05*sim_tlln + 0.10*sim_gender + 0.10*sim_byear + 0.05*sim_village + 0.05*sim_subvillage + 0.25*name_score
+    0.25*sim_fn + 0.10*sim_mn + 0.25*sim_ln + 0.02*sim_tlfn + 0.01*sim_tlmn + 0.02*sim_tlln + 0.10*sim_gender + 0.03*sim_bday + 0.03*sim_bmonth + 0.09*sim_byear + 0.05*sim_village + 0.05*sim_subvillage
   ) desc) as rank_no_gap,
   dense_rank() over (order by (
-    0.35*sim_fn + 0.15*sim_mn + 0.35*sim_ln + 0.10*sim_gender + 0.10*sim_byear + 0.25*name_score
+    0.25*sim_fn + 0.10*sim_mn + 0.25*sim_ln + 0.10*sim_gender + 0.09*sim_byear
   ) desc) as rank_gap,
   row_number() over (order by (
-    0.35*sim_fn + 0.15*sim_mn + 0.35*sim_ln + 0.05*sim_tlfn + 0.05*sim_tlmn + 0.05*sim_tlln + 0.10*sim_gender + 0.10*sim_byear + 0.05*sim_village + 0.05*sim_subvillage + 0.25*name_score
+    0.25*sim_fn + 0.10*sim_mn + 0.25*sim_ln + 0.02*sim_tlfn + 0.01*sim_tlmn + 0.02*sim_tlln + 0.10*sim_gender + 0.03*sim_bday + 0.03*sim_bmonth + 0.09*sim_byear + 0.05*sim_village + 0.05*sim_subvillage
   ) desc) as row_number,
   name_score,
   location,
