@@ -57,6 +57,8 @@ with q as (
   select
     di.dss_id,
     di.birth_year,
+    di.birth_day,
+    di.birth_month,
     di.first_name,
     di.middle_name,
     di.last_name,
