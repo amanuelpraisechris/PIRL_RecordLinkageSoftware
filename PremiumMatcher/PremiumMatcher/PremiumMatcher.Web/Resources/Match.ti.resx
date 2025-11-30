@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Page Title -->
+  <data name="RecordMatching" xml:space="preserve">
+    <value>መዝገብ ምትእስሳር</value>
+    <comment>Tigrinya: Record Matching/Linkage</comment>
+  </data>
+
+  <!-- Search Form - Ethiopian Naming Convention (Given, Father's, Grandfather's) -->
+  <data name="FirstName" xml:space="preserve">
+    <value>ስም</value>
+    <comment>Tigrinya: Given Name (not "First Name")</comment>
+  </data>
+  <data name="MiddleName" xml:space="preserve">
+    <value>ስም አቦ</value>
+    <comment>Tigrinya: Father's Name (patronymic)</comment>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>ስም ኣያት</value>
+    <comment>Tigrinya: Grandfather's Name</comment>
+  </data>
+  <data name="MotherName" xml:space="preserve">
+    <value>ስም እዲ</value>
+    <comment>Tigrinya: Mother's Name (for children)</comment>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>ፆታ</value>
+    <comment>Tigrinya: Gender/Sex</comment>
+  </data>
+  <data name="Male" xml:space="preserve">
+    <value>ተባዕታይ</value>
+    <comment>Tigrinya: Male</comment>
+  </data>
+  <data name="Female" xml:space="preserve">
+    <value>ኣንስታይ</value>
+    <comment>Tigrinya: Female</comment>
+  </data>
+  <data name="BirthDay" xml:space="preserve">
+    <value>መዓልቲ ልደት</value>
+    <comment>Tigrinya: Birth Day</comment>
+  </data>
+  <data name="BirthMonth" xml:space="preserve">
+    <value>ወርሒ ልደት</value>
+    <comment>Tigrinya: Birth Month</comment>
+  </data>
+  <data name="BirthYear" xml:space="preserve">
+    <value>ዓመተ ልደት</value>
+    <comment>Tigrinya: Birth Year</comment>
+  </data>
+  <data name="Age" xml:space="preserve">
+    <value>ዕድመ</value>
+    <comment>Tigrinya: Age (in years)</comment>
+  </data>
+
+  <!-- Location - Tigray Administrative Structure -->
+  <data name="Region" xml:space="preserve">
+    <value>ክልል</value>
+    <comment>Tigrinya: Region (e.g., Tigray)</comment>
+  </data>
+  <data name="Zone" xml:space="preserve">
+    <value>ዞን</value>
+    <comment>Tigrinya: Zone (e.g., Eastern Zone)</comment>
+  </data>
+  <data name="Woreda" xml:space="preserve">
+    <value>ወረዳ</value>
+    <comment>Tigrinya: Woreda (district)</comment>
+  </data>
+  <data name="Tabia" xml:space="preserve">
+    <value>ታብያ</value>
+    <comment>Tigrinya: Tabia (sub-district, used in Tigray instead of Kebele)</comment>
+  </data>
+  <data name="Kebele" xml:space="preserve">
+    <value>ቀበሌ</value>
+    <comment>Tigrinya: Kebele (urban neighborhood)</comment>
+  </data>
+  <data name="Kushet" xml:space="preserve">
+    <value>ኩሸት</value>
+    <comment>Tigrinya: Kushet (village cluster)</comment>
+  </data>
+  <data name="Gott" xml:space="preserve">
+    <value>ጎጥ</value>
+    <comment>Tigrinya: Gott/Got (sub-village)</comment>
+  </data>
+  <data name="Village" xml:space="preserve">
+    <value>ቀጠና</value>
+    <comment>Tigrinya: Village</comment>
+  </data>
+  <data name="HouseNumber" xml:space="preserve">
+    <value>ቁ. ገዛ</value>
+    <comment>Tigrinya: House Number</comment>
+  </data>
+
+  <!-- Calendar -->
+  <data name="CalendarType" xml:space="preserve">
+    <value>ዓይነት ዘመን ኣቆጻጸራ</value>
+    <comment>Tigrinya: Calendar Type</comment>
+  </data>
+  <data name="Gregorian" xml:space="preserve">
+    <value>ግሪጎርያን</value>
+    <comment>Tigrinya: Gregorian Calendar</comment>
+  </data>
+  <data name="Ethiopian" xml:space="preserve">
+    <value>ናይ ኢትዮጵያ ዘመን</value>
+    <comment>Tigrinya: Ethiopian Calendar</comment>
+  </data>
+
+  <!-- Ethiopian Months (Tigrinya) -->
+  <data name="Meskerem" xml:space="preserve">
+    <value>መስከረም</value>
+    <comment>1st Ethiopian month (Sep 11 - Oct 10)</comment>
+  </data>
+  <data name="Tikimt" xml:space="preserve">
+    <value>ጥቅምቲ</value>
+    <comment>2nd Ethiopian month (Oct 11 - Nov 9)</comment>
+  </data>
+  <data name="Hidar" xml:space="preserve">
+    <value>ሕዳር</value>
+    <comment>3rd Ethiopian month (Nov 10 - Dec 9)</comment>
+  </data>
+  <data name="Tahsas" xml:space="preserve">
+    <value>ታሕሳስ</value>
+    <comment>4th Ethiopian month (Dec 10 - Jan 8)</comment>
+  </data>
+  <data name="Tir" xml:space="preserve">
+    <value>ጥሪ</value>
+    <comment>5th Ethiopian month (Jan 9 - Feb 7)</comment>
+  </data>
+  <data name="Yekatit" xml:space="preserve">
+    <value>የካቲት</value>
+    <comment>6th Ethiopian month (Feb 8 - Mar 9)</comment>
+  </data>
+  <data name="Megabit" xml:space="preserve">
+    <value>መጋቢት</value>
+    <comment>7th Ethiopian month (Mar 10 - Apr 8)</comment>
+  </data>
+  <data name="Miazia" xml:space="preserve">
+    <value>ሚያዝያ</value>
+    <comment>8th Ethiopian month (Apr 9 - May 8)</comment>
+  </data>
+  <data name="Ginbot" xml:space="preserve">
+    <value>ግንቦት</value>
+    <comment>9th Ethiopian month (May 9 - Jun 7)</comment>
+  </data>
+  <data name="Sene" xml:space="preserve">
+    <value>ሰነ</value>
+    <comment>10th Ethiopian month (Jun 8 - Jul 7)</comment>
+  </data>
+  <data name="Hamle" xml:space="preserve">
+    <value>ሐምለ</value>
+    <comment>11th Ethiopian month (Jul 8 - Aug 6)</comment>
+  </data>
+  <data name="Nehase" xml:space="preserve">
+    <value>ነሐሴ</value>
+    <comment>12th Ethiopian month (Aug 7 - Sep 5)</comment>
+  </data>
+  <data name="Pagume" xml:space="preserve">
+    <value>ጳጉሜ</value>
+    <comment>13th Ethiopian month - 5 or 6 days (Sep 6 - Sep 10/11)</comment>
+  </data>
+
+  <!-- Search Criteria Toggles -->
+  <data name="UseFirstName" xml:space="preserve">
+    <value>ስም ተጠቐም</value>
+    <comment>Tigrinya: Use Given Name</comment>
+  </data>
+  <data name="UseMiddleName" xml:space="preserve">
+    <value>ስም አቦ ተጠቐም</value>
+    <comment>Tigrinya: Use Father's Name</comment>
+  </data>
+  <data name="UseLastName" xml:space="preserve">
+    <value>ስም ኣያት ተጠቐም</value>
+    <comment>Tigrinya: Use Grandfather's Name</comment>
+  </data>
+  <data name="UseGender" xml:space="preserve">
+    <value>ፆታ ተጠቐም</value>
+    <comment>Tigrinya: Use Gender</comment>
+  </data>
+  <data name="UseBirthDay" xml:space="preserve">
+    <value>መዓልቲ ልደት ተጠቐም</value>
+    <comment>Tigrinya: Use Birth Day</comment>
+  </data>
+  <data name="UseBirthMonth" xml:space="preserve">
+    <value>ወርሒ ልደት ተጠቐም</value>
+    <comment>Tigrinya: Use Birth Month</comment>
+  </data>
+  <data name="UseBirthYear" xml:space="preserve">
+    <value>ዓመተ ልደት ተጠቐም</value>
+    <comment>Tigrinya: Use Birth Year</comment>
+  </data>
+  <data name="UseTabia" xml:space="preserve">
+    <value>ታብያ ተጠቐም</value>
+    <comment>Tigrinya: Use Tabia</comment>
+  </data>
+  <data name="UseKebele" xml:space="preserve">
+    <value>ቀበሌ ተጠቐም</value>
+    <comment>Tigrinya: Use Kebele</comment>
+  </data>
+  <data name="UseKushet" xml:space="preserve">
+    <value>ኩሸት ተጠቐም</value>
+    <comment>Tigrinya: Use Kushet</comment>
+  </data>
+
+  <!-- Buttons -->
+  <data name="SearchButton" xml:space="preserve">
+    <value>ድለ</value>
+    <comment>Tigrinya: Search</comment>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>በምድላይ ኣሎ…</value>
+    <comment>Tigrinya: Searching...</comment>
+  </data>
+  <data name="AssignMatch" xml:space="preserve">
+    <value>ማዕሪኡ ምደብ</value>
+    <comment>Tigrinya: Assign Match</comment>
+  </data>
+  <data name="Assigning" xml:space="preserve">
+    <value>በምምዳብ ኣሎ…</value>
+    <comment>Tigrinya: Assigning...</comment>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>ምረጽ</value>
+    <comment>Tigrinya: Select</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>ስረዝ</value>
+    <comment>Tigrinya: Cancel</comment>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>ኣቐምጥ</value>
+    <comment>Tigrinya: Save</comment>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>ጽርግያ</value>
+    <comment>Tigrinya: Clear</comment>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>ተመለስ</value>
+    <comment>Tigrinya: Back</comment>
+  </data>
+
+  <!-- Results Table -->
+  <data name="DssId" xml:space="preserve">
+    <value>መለለዪ DSS</value>
+    <comment>Tigrinya: DSS ID</comment>
+  </data>
+  <data name="HdssId" xml:space="preserve">
+    <value>መለለዪ HDSS</value>
+    <comment>Tigrinya: HDSS ID (Health and Demographic Surveillance System)</comment>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>ውጽኢት</value>
+    <comment>Tigrinya: Score/Match Confidence</comment>
+  </data>
+  <data name="NameScore" xml:space="preserve">
+    <value>ውጽኢት ስም</value>
+    <comment>Tigrinya: Name Score</comment>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>ቦታ</value>
+    <comment>Tigrinya: Location</comment>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>ደረጃ</value>
+    <comment>Tigrinya: Rank</comment>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>ውጽኢት የለን</value>
+    <comment>Tigrinya: No Results Found</comment>
+  </data>
+  <data name="ResultsFound" xml:space="preserve">
+    <value>{0} ውጽኢት ተረኺቡ</value>
+    <comment>Tigrinya: {0} Results Found</comment>
+  </data>
+
+  <!-- Match Assignment Form -->
+  <data name="AssignMatchTitle" xml:space="preserve">
+    <value>ማዕሪ ምድብ</value>
+    <comment>Tigrinya: Assign Match</comment>
+  </data>
+  <data name="Facility" xml:space="preserve">
+    <value>ናይ ጥዕና ትካል</value>
+    <comment>Tigrinya: Health Facility</comment>
+  </data>
+  <data name="RecordNo" xml:space="preserve">
+    <value>ቁ. መዝገብ</value>
+    <comment>Tigrinya: Record Number</comment>
+  </data>
+  <data name="MrnNumber" xml:space="preserve">
+    <value>ቁ. MRN</value>
+    <comment>Tigrinya: Medical Record Number</comment>
+  </data>
+  <data name="EmrNumber" xml:space="preserve">
+    <value>ቁ. EMR</value>
+    <comment>Tigrinya: Electronic Medical Record Number</comment>
+  </data>
+  <data name="ArtNumber" xml:space="preserve">
+    <value>ቁ. ART</value>
+    <comment>Tigrinya: ART (Anti-Retroviral Therapy) Number</comment>
+  </data>
+  <data name="SmartCareId" xml:space="preserve">
+    <value>መለለዪ ስማርትከር</value>
+    <comment>Tigrinya: SmartCare ID</comment>
+  </data>
+  <data name="TbNumber" xml:space="preserve">
+    <value>ቁ. ምዝገባ ሳንባ ነቀርሳ</value>
+    <comment>Tigrinya: TB Registration Number</comment>
+  </data>
+  <data name="PmtctId" xml:space="preserve">
+    <value>መለለዪ PMTCT</value>
+    <comment>Tigrinya: PMTCT ID (Prevention of Mother-to-Child Transmission)</comment>
+  </data>
+  <data name="AncNumber" xml:space="preserve">
+    <value>ቁ. ANC</value>
+    <comment>Tigrinya: Antenatal Care Number</comment>
+  </data>
+  <data name="HivTestingId" xml:space="preserve">
+    <value>መለለዪ ምርመራ ኤችአይቪ</value>
+    <comment>Tigrinya: HIV Testing ID</comment>
+  </data>
+
+  <!-- Health Facility Types (Tigrinya Context) -->
+  <data name="SpecializedHospital" xml:space="preserve">
+    <value>ልዩ ሆስፒታል</value>
+    <comment>Tigrinya: Specialized Hospital</comment>
+  </data>
+  <data name="GeneralHospital" xml:space="preserve">
+    <value>ሓፈሻዊ ሆስፒታል</value>
+    <comment>Tigrinya: General Hospital (e.g., Wukro General Hospital)</comment>
+  </data>
+  <data name="PrimaryHospital" xml:space="preserve">
+    <value>ቀዳማይ ደረጃ ሆስፒታል</value>
+    <comment>Tigrinya: Primary Hospital</comment>
+  </data>
+  <data name="HealthCenter" xml:space="preserve">
+    <value>ማእከል ጥዕና</value>
+    <comment>Tigrinya: Health Center</comment>
+  </data>
+  <data name="HealthPost" xml:space="preserve">
+    <value>ጣብያ ጥዕና</value>
+    <comment>Tigrinya: Health Post</comment>
+  </data>
+  <data name="Clinic" xml:space="preserve">
+    <value>ክሊኒክ</value>
+    <comment>Tigrinya: Clinic</comment>
+  </data>
+
+  <!-- User Roles (Ethiopian Health System) -->
+  <data name="HealthExtensionWorker" xml:space="preserve">
+    <value>ሰራሕተኛ ምስፍሕፋሕ ጥዕና</value>
+    <comment>Tigrinya: Health Extension Worker (HEW)</comment>
+  </data>
+  <data name="Nurse" xml:space="preserve">
+    <value>ነርስ</value>
+    <comment>Tigrinya: Nurse</comment>
+  </data>
+  <data name="HealthOfficer" xml:space="preserve">
+    <value>ኣማሓዳሪ ጥዕና</value>
+    <comment>Tigrinya: Health Officer</comment>
+  </data>
+  <data name="Doctor" xml:space="preserve">
+    <value>ሓኪም</value>
+    <comment>Tigrinya: Doctor</comment>
+  </data>
+  <data name="HdssSupervisor" xml:space="preserve">
+    <value>ኣቆጻጻሪ HDSS</value>
+    <comment>Tigrinya: HDSS Field Supervisor</comment>
+  </data>
+  <data name="FacilityManager" xml:space="preserve">
+    <value>ኣማሓዳሪ ትካል</value>
+    <comment>Tigrinya: Facility Manager</comment>
+  </data>
+  <data name="DataClerk" xml:space="preserve">
+    <value>ጸሓፊ መረዳእታ</value>
+    <comment>Tigrinya: Data Clerk</comment>
+  </data>
+
+  <!-- Warnings -->
+  <data name="LowNameScoreWarning" xml:space="preserve">
+    <value>ውሑድ ውጽኢት ስም - ቅድሚ ምቕጻልካ ኣረጋግጽ።</value>
+    <comment>Tigrinya: Low name score - verify before continuing</comment>
+  </data>
+  <data name="BirthYearGapWarning" xml:space="preserve">
+    <value>ልዩነት ዓመተ ልደት ብዙሕ እዩ።</value>
+    <comment>Tigrinya: Birth year gap is large</comment>
+  </data>
+  <data name="DuplicateWarning" xml:space="preserve">
+    <value>እዚ መለለዪ ናይ ክሊኒክ ቅድሚ ሕጂ ኣሎ።</value>
+    <comment>Tigrinya: This clinic ID already exists</comment>
+  </data>
+  <data name="ConfirmAssignment" xml:space="preserve">
+    <value>እዚ ማዕሪ ከምድቦ ድለዩት ዲኻ?</value>
+    <comment>Tigrinya: Are you sure you want to assign this match?</comment>
+  </data>
+  <data name="LowConfidenceWarning" xml:space="preserve">
+    <value>ውሑድ እምነት ({0:P0}) - ብጥንቃቐ ኣረጋግጽ።</value>
+    <comment>Tigrinya: Low confidence - verify carefully</comment>
+  </data>
+  <data name="MediumConfidenceWarning" xml:space="preserve">
+    <value>ማእከላይ እምነት ({0:P0}) - ቅድሚ ምምዳብ ኣረጋግጽ።</value>
+    <comment>Tigrinya: Medium confidence - verify before assigning</comment>
+  </data>
+  <data name="HighConfidence" xml:space="preserve">
+    <value>ልዑል እምነት ({0:P0})</value>
+    <comment>Tigrinya: High confidence</comment>
+  </data>
+
+  <!-- Success Messages -->
+  <data name="MatchAssigned" xml:space="preserve">
+    <value>ማዕሪ ተመዲቡ (መለለዪ={0})።</value>
+    <comment>Tigrinya: Match assigned (ID={0})</comment>
+  </data>
+  <data name="MatchSaved" xml:space="preserve">
+    <value>ማዕሪ ተኣቂቡ።</value>
+    <comment>Tigrinya: Match saved</comment>
+  </data>
+  <data name="DataSaved" xml:space="preserve">
+    <value>መረዳእታ ተኣቂቡ።</value>
+    <comment>Tigrinya: Data saved</comment>
+  </data>
+
+  <!-- Error Messages -->
+  <data name="ErrorOccurred" xml:space="preserve">
+    <value>ጌጋ ኣጋጢሙ: {0}</value>
+    <comment>Tigrinya: Error occurred</comment>
+  </data>
+  <data name="SearchFailed" xml:space="preserve">
+    <value>ምድላይ ኣይተዓወተን።</value>
+    <comment>Tigrinya: Search failed</comment>
+  </data>
+  <data name="SaveFailed" xml:space="preserve">
+    <value>ምዕቃብ ኣይተዓወተን።</value>
+    <comment>Tigrinya: Save failed</comment>
+  </data>
+  <data name="DatabaseError" xml:space="preserve">
+    <value>ጌጋ ዳታቤዝ: {0}</value>
+    <comment>Tigrinya: Database error</comment>
+  </data>
+  <data name="NetworkError" xml:space="preserve">
+    <value>ጌጋ መርበብ - ምትሕሓዝካ ኣረጋግጽ።</value>
+    <comment>Tigrinya: Network error - check your connection</comment>
+  </data>
+  <data name="OfflineMode" xml:space="preserve">
+    <value>ኣብ ስርሐት ሓልኺ (ኣብ ስእሊ ተመዝጊቡ)።</value>
+    <comment>Tigrinya: Offline mode (will sync later)</comment>
+  </data>
+  <data name="SyncRequired" xml:space="preserve">
+    <value>ምትእስስር ይድለ።</value>
+    <comment>Tigrinya: Sync required</comment>
+  </data>
+
+  <!-- Household Information -->
+  <data name="Household" xml:space="preserve">
+    <value>ቤተሰብ</value>
+    <comment>Tigrinya: Household</comment>
+  </data>
+  <data name="HouseholdHead" xml:space="preserve">
+    <value>ርእሲ ቤተሰብ</value>
+    <comment>Tigrinya: Household Head</comment>
+  </data>
+  <data name="HouseholdMembers" xml:space="preserve">
+    <value>ኣባላት ቤተሰብ</value>
+    <comment>Tigrinya: Household Members</comment>
+  </data>
+  <data name="RelationshipToHead" xml:space="preserve">
+    <value>ምስ ርእሲ ቤተሰብ ዝምድና</value>
+    <comment>Tigrinya: Relationship to Household Head</comment>
+  </data>
+
+  <!-- Consent -->
+  <data name="Consent" xml:space="preserve">
+    <value>ፍቓድ</value>
+    <comment>Tigrinya: Consent</comment>
+  </data>
+  <data name="VerbalConsent" xml:space="preserve">
+    <value>ብቃል ዝተዋህበ ፍቓድ</value>
+    <comment>Tigrinya: Verbal Consent</comment>
+  </data>
+  <data name="WrittenConsent" xml:space="preserve">
+    <value>ብጽሑፍ ዝተዋህበ ፍቓድ</value>
+    <comment>Tigrinya: Written Consent</comment>
+  </data>
+  <data name="ConsentForLinkage" xml:space="preserve">
+    <value>ንምትእስሳር መረዳእታ ፍቓድ</value>
+    <comment>Tigrinya: Consent for data linkage</comment>
+  </data>
+  <data name="WitnessName" xml:space="preserve">
+    <value>ስም መስክር</value>
+    <comment>Tigrinya: Witness Name</comment>
+  </data>
+
+  <!-- Help & Instructions -->
+  <data name="Help" xml:space="preserve">
+    <value>ሓገዝ</value>
+    <comment>Tigrinya: Help</comment>
+  </data>
+  <data name="Instructions" xml:space="preserve">
+    <value>መምርሒታት</value>
+    <comment>Tigrinya: Instructions</comment>
+  </data>
+  <data name="SearchInstructions" xml:space="preserve">
+    <value>ስም እቲ ሕሙም ኣእትው ብድሕሪኡ "ድለ" ጠውቕ።</value>
+    <comment>Tigrinya: Enter patient name then click "Search"</comment>
+  </data>
+  <data name="MinimumCriteria" xml:space="preserve">
+    <value>እቲ ትሑት ስም ወይ ዓመተ ልደት ጠቐስ።</value>
+    <comment>Tigrinya: Provide at least name or birth year</comment>
+  </data>
+
+  <!-- Loading & Status -->
+  <data name="Loading" xml:space="preserve">
+    <value>በምጽዓን ኣሎ…</value>
+    <comment>Tigrinya: Loading...</comment>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>በምስራሕ ኣሎ…</value>
+    <comment>Tigrinya: Processing...</comment>
+  </data>
+  <data name="Syncing" xml:space="preserve">
+    <value>በምትእስሳር ኣሎ…</value>
+    <comment>Tigrinya: Syncing...</comment>
+  </data>
+  <data name="Ready" xml:space="preserve">
+    <value>ድሉው</value>
+    <comment>Tigrinya: Ready</comment>
+  </data>
+  <data name="Online" xml:space="preserve">
+    <value>ኣብ መስመር</value>
+    <comment>Tigrinya: Online</comment>
+  </data>
+  <data name="Offline" xml:space="preserve">
+    <value>ኣብ ስእሊ</value>
+    <comment>Tigrinya: Offline</comment>
+  </data>
+</root>
