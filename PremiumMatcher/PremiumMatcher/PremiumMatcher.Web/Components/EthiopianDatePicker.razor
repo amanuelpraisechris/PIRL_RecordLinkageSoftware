@@ -1,0 +1,238 @@
+@* Ethiopian Calendar Date Picker Component *@
+@* Supports dual calendar: Ethiopian (Ge'ez) and Gregorian *@
+@* Usage: <EthiopianDatePicker @bind-Day="day" @bind-Month="month" @bind-Year="year" CalendarType="@calendarType" /> *@
+
+<div class="ethiopian-date-picker">
+    <div class="row g-2 align-items-center">
+        @* Calendar Type Selector *@
+        <div class="col-12 col-md-4 mb-2">
+            <label class="form-label small mb-1">@GetLabel("CalendarType")</label>
+            <select class="form-select" @onchange="OnCalendarTypeChanged" value="@CalendarType">
+                <option value="Ethiopian">@GetLabel("Ethiopian")</option>
+                <option value="Gregorian">@GetLabel("Gregorian")</option>
+            </select>
+        </div>
+
+        @if (CalendarType == "Ethiopian")
+        {
+            @* Ethiopian Calendar Input *@
+            <div class="col-4 col-md-2">
+                <label class="form-label small mb-1">@GetLabel("BirthDay")</label>
+                <input type="number" class="form-control" min="1" max="30"
+                       placeholder="@GetLabel("BirthDay")"
+                       value="@Day" @onchange="OnDayChanged" />
+            </div>
+            <div class="col-8 col-md-3">
+                <label class="form-label small mb-1">@GetLabel("BirthMonth")</label>
+                <select class="form-select" @onchange="OnMonthChanged" value="@Month">
+                    <option value="">@GetLabel("BirthMonth")</option>
+                    <option value="1">1 - @GetEthiopianMonthName(1)</option>
+                    <option value="2">2 - @GetEthiopianMonthName(2)</option>
+                    <option value="3">3 - @GetEthiopianMonthName(3)</option>
+                    <option value="4">4 - @GetEthiopianMonthName(4)</option>
+                    <option value="5">5 - @GetEthiopianMonthName(5)</option>
+                    <option value="6">6 - @GetEthiopianMonthName(6)</option>
+                    <option value="7">7 - @GetEthiopianMonthName(7)</option>
+                    <option value="8">8 - @GetEthiopianMonthName(8)</option>
+                    <option value="9">9 - @GetEthiopianMonthName(9)</option>
+                    <option value="10">10 - @GetEthiopianMonthName(10)</option>
+                    <option value="11">11 - @GetEthiopianMonthName(11)</option>
+                    <option value="12">12 - @GetEthiopianMonthName(12)</option>
+                    <option value="13">13 - @GetEthiopianMonthName(13)</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3">
+                <label class="form-label small mb-1">@GetLabel("BirthYear")</label>
+                <input type="number" class="form-control" min="1900" max="2100"
+                       placeholder="@GetLabel("BirthYear") (EC)"
+                       value="@Year" @onchange="OnYearChanged" />
+                <small class="text-muted">EC: @Year ≈ AD: @GetGregorianYear()</small>
+            </div>
+        }
+        else
+        {
+            @* Gregorian Calendar Input *@
+            <div class="col-4 col-md-2">
+                <label class="form-label small mb-1">Day</label>
+                <input type="number" class="form-control" min="1" max="31"
+                       placeholder="Day"
+                       value="@Day" @onchange="OnDayChanged" />
+            </div>
+            <div class="col-8 col-md-3">
+                <label class="form-label small mb-1">Month</label>
+                <select class="form-select" @onchange="OnMonthChanged" value="@Month">
+                    <option value="">Month</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3">
+                <label class="form-label small mb-1">Year</label>
+                <input type="number" class="form-control" min="1900" max="2100"
+                       placeholder="Year (AD)"
+                       value="@Year" @onchange="OnYearChanged" />
+            </div>
+        }
+    </div>
+
+    @* Age-based option (for those who don't know exact date) *@
+    <div class="row g-2 mt-2">
+        <div class="col-12">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="ageOnly" @onchange="OnAgeOnlyChanged" checked="@AgeOnly">
+                <label class="form-check-label small" for="ageOnly">
+                    @GetLabel("Age") only (@GetLabel("BirthYear") approximate)
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? Day { get; set; }
+    [Parameter] public EventCallback<string?> DayChanged { get; set; }
+
+    [Parameter] public string? Month { get; set; }
+    [Parameter] public EventCallback<string?> MonthChanged { get; set; }
+
+    [Parameter] public string? Year { get; set; }
+    [Parameter] public EventCallback<string?> YearChanged { get; set; }
+
+    [Parameter] public string CalendarType { get; set; } = "Ethiopian";
+    [Parameter] public EventCallback<string> CalendarTypeChanged { get; set; }
+
+    [Parameter] public bool AgeOnly { get; set; } = false;
+    [Parameter] public EventCallback<bool> AgeOnlyChanged { get; set; }
+
+    [Parameter] public string Language { get; set; } = "ti"; // Default to Tigrinya
+
+    // Ethiopian month names (Tigrinya)
+    private readonly string[] EthiopianMonthsTigrinya = new[]
+    {
+        "", // Index 0 (unused)
+        "መስከረም", "ጥቅምቲ", "ሕዳር", "ታሕሳስ", "ጥሪ", "የካቲት",
+        "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰነ", "ሐምለ", "ነሐሴ", "ጳጉሜ"
+    };
+
+    // Ethiopian month names (Amharic)
+    private readonly string[] EthiopianMonthsAmharic = new[]
+    {
+        "", // Index 0 (unused)
+        "መስከረም", "ጥቅምት", "ኅዳር", "ታኅሣሥ", "ጥር", "የካቲት",
+        "መጋቢት", "ሚያዝያ", "ግንቦት", "ሰኔ", "ሐምሌ", "ነሐሴ", "ጳጉሜን"
+    };
+
+    private async Task OnCalendarTypeChanged(ChangeEventArgs e)
+    {
+        CalendarType = e.Value?.ToString() ?? "Ethiopian";
+        await CalendarTypeChanged.InvokeAsync(CalendarType);
+    }
+
+    private async Task OnDayChanged(ChangeEventArgs e)
+    {
+        Day = e.Value?.ToString();
+        await DayChanged.InvokeAsync(Day);
+    }
+
+    private async Task OnMonthChanged(ChangeEventArgs e)
+    {
+        Month = e.Value?.ToString();
+        await MonthChanged.InvokeAsync(Month);
+    }
+
+    private async Task OnYearChanged(ChangeEventArgs e)
+    {
+        Year = e.Value?.ToString();
+        await YearChanged.InvokeAsync(Year);
+    }
+
+    private async Task OnAgeOnlyChanged(ChangeEventArgs e)
+    {
+        AgeOnly = (bool)(e.Value ?? false);
+        if (AgeOnly)
+        {
+            // Clear day and month when age-only mode is enabled
+            Day = null;
+            Month = null;
+            await DayChanged.InvokeAsync(Day);
+            await MonthChanged.InvokeAsync(Month);
+        }
+        await AgeOnlyChanged.InvokeAsync(AgeOnly);
+    }
+
+    private string GetEthiopianMonthName(int month)
+    {
+        if (month < 1 || month > 13) return "";
+
+        return Language switch
+        {
+            "am" => EthiopianMonthsAmharic[month],
+            "ti" => EthiopianMonthsTigrinya[month],
+            _ => EthiopianMonthsTigrinya[month] // Default to Tigrinya
+        };
+    }
+
+    private string GetGregorianYear()
+    {
+        if (string.IsNullOrEmpty(Year) || !int.TryParse(Year, out int ethYear))
+            return "?";
+
+        // Simple approximation: Ethiopian year + 7 or 8 = Gregorian year
+        // Actual conversion depends on month (Sept-Dec: +7, Jan-Aug: +8)
+        int gregYear = ethYear + 8;
+        return gregYear.ToString();
+    }
+
+    private string GetLabel(string key)
+    {
+        // This would normally come from resource files
+        // For now, return basic labels - will be integrated with localization later
+        return key switch
+        {
+            "CalendarType" => Language == "ti" ? "ዓይነት ዘመን ኣቆጻጸራ" : "የቀን መቁጠሪያ",
+            "Ethiopian" => Language == "ti" ? "ናይ ኢትዮጵያ ዘመን" : "የኢትዮጵያ ዘመን",
+            "Gregorian" => Language == "ti" ? "ግሪጎርያን" : "ግሪጎሪያን",
+            "BirthDay" => Language == "ti" ? "መዓልቲ" : "ቀን",
+            "BirthMonth" => Language == "ti" ? "ወርሒ" : "ወር",
+            "BirthYear" => Language == "ti" ? "ዓመተ" : "አመት",
+            "Age" => Language == "ti" ? "ዕድመ" : "ዕድሜ",
+            _ => key
+        };
+    }
+}
+
+<style>
+    .ethiopian-date-picker {
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 0.375rem;
+        border: 1px solid #dee2e6;
+    }
+
+    .ethiopian-date-picker .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .ethiopian-date-picker .text-muted {
+        font-size: 0.75rem;
+        display: block;
+        margin-top: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+        .ethiopian-date-picker {
+            padding: 0.75rem;
+        }
+    }
+</style>

@@ -1,0 +1,279 @@
+@* Hierarchical Location Picker for Kilte Awlalo HDSS *@
+@* Cascading selection: Woreda → Tabia → Kushet → Gott *@
+@* Usage: <LocationPicker @bind-TabiaCode="tabiaCode" @bind-KushetCode="kushetCode" Language="@language" /> *@
+
+@inject HttpClient Http
+
+<div class="location-picker">
+    <div class="row g-2">
+        @* Woreda (fixed for Kilte Awlalo) *@
+        <div class="col-12 col-md-3">
+            <label class="form-label small mb-1">
+                @GetLabel("Woreda")
+                <span class="text-muted">(ወረዳ)</span>
+            </label>
+            <input type="text" class="form-control" value="Kilte Awlalo" readonly disabled />
+        </div>
+
+        @* Tabia Dropdown *@
+        <div class="col-12 col-md-3">
+            <label class="form-label small mb-1">
+                @GetLabel("Tabia") <span class="text-danger">*</span>
+                <span class="text-muted">(ታብያ)</span>
+            </label>
+            <select class="form-select" @onchange="OnTabiaChanged" value="@TabiaCode">
+                <option value="">@GetLabel("SelectTabia")</option>
+                @foreach (var tabia in Tabias)
+                {
+                    <option value="@tabia.Code">@GetTabiaName(tabia)</option>
+                }
+            </select>
+        </div>
+
+        @* Kushet Dropdown (filtered by selected Tabia) *@
+        <div class="col-12 col-md-3">
+            <label class="form-label small mb-1">
+                @GetLabel("Kushet")
+                <span class="text-muted">(ኩሸት)</span>
+            </label>
+            <select class="form-select" @onchange="OnKushetChanged" value="@KushetCode" disabled="@string.IsNullOrEmpty(TabiaCode)">
+                <option value="">@GetLabel("SelectKushet")</option>
+                @foreach (var kushet in FilteredKushets)
+                {
+                    <option value="@kushet.Code">@GetKushetName(kushet)</option>
+                }
+            </select>
+            @if (string.IsNullOrEmpty(TabiaCode))
+            {
+                <small class="text-muted">@GetLabel("SelectTabiaFirst")</small>
+            }
+        </div>
+
+        @* Gott/Sub-village (optional, free text) *@
+        <div class="col-12 col-md-3">
+            <label class="form-label small mb-1">
+                @GetLabel("Gott") @GetLabel("Optional")
+                <span class="text-muted">(ጎጥ)</span>
+            </label>
+            <input type="text" class="form-control" placeholder="@GetLabel("GottPlaceholder")"
+                   value="@Gott" @onchange="OnGottChanged" />
+        </div>
+    </div>
+
+    @* Population info (helpful context) *@
+    @if (!string.IsNullOrEmpty(TabiaCode) && SelectedTabia != null)
+    {
+        <div class="row mt-2">
+            <div class="col-12">
+                <small class="text-muted">
+                    📍 @GetTabiaName(SelectedTabia) - @GetLabel("Population"): ~@SelectedTabia.PopulationEstimate
+                    @if (!string.IsNullOrEmpty(KushetCode) && SelectedKushet != null)
+                    {
+                        <span> | @GetKushetName(SelectedKushet) - ~@SelectedKushet.PopulationEstimate</span>
+                    }
+                </small>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string? TabiaCode { get; set; }
+    [Parameter] public EventCallback<string?> TabiaCodeChanged { get; set; }
+
+    [Parameter] public string? KushetCode { get; set; }
+    [Parameter] public EventCallback<string?> KushetCodeChanged { get; set; }
+
+    [Parameter] public string? Gott { get; set; }
+    [Parameter] public EventCallback<string?> GottChanged { get; set; }
+
+    [Parameter] public string Language { get; set; } = "ti"; // ti, am, en
+
+    // Kilte Awlalo Tabias (10)
+    private List<TabiaModel> Tabias = new()
+    {
+        new("KA-AGBE", "ኣግበ", "አግቤ", "Agbe", 7200),
+        new("KA-WUKRO", "ውቕሮ", "ውቕሮ", "Wukro Town", 12500),
+        new("KA-CHELE", "ጨሌ", "ቼሌ", "Chele", 6800),
+        new("KA-DERA", "ዴራ", "ዴራ", "Dera", 5900),
+        new("KA-ENDAHWUKRO", "እንዳሁውቕሮ", "እንዳሁውቕሮ", "Endahwukro", 6400),
+        new("KA-GENFEL", "ገንፈል", "ገንፈል", "Genfel", 5500),
+        new("KA-HAREZA", "ሓረዛ", "ሓረዛ", "Hareza", 7100),
+        new("KA-SHIBDIH", "ሽብዲህ", "ሽብዲህ", "Shibdih", 6200),
+        new("KA-TSAEDA", "ጻዕዳ", "ጻዕዳ", "Tsaeda Emba", 5400),
+        new("KA-ZABA", "ዛባ", "ዛባ", "Zaba Guna", 4000)
+    };
+
+    // Kilte Awlalo Kushets (33) - mapped to Tabias
+    private List<KushetModel> Kushets = new()
+    {
+        // Agbe Tabia
+        new("KA-AGBE-01", "ኣግበ", "አግቤ", "Agbe", "KA-AGBE", 2400),
+        new("KA-AGBE-02", "ገንፈል", "ገንፈል", "Genfel", "KA-AGBE", 2100),
+        new("KA-AGBE-03", "ማይ ጨው", "ማይ ጨው", "May Chew", "KA-AGBE", 1500),
+        new("KA-AGBE-04", "አዲ ኩዋላ", "አዲ ኩዋላ", "Adi Kuwala", "KA-AGBE", 1200),
+
+        // Wukro Town Tabia
+        new("KA-WUKRO-01", "ቀበሌ 01", "ቀበሌ 01", "Kebele 01", "KA-WUKRO", 2800),
+        new("KA-WUKRO-02", "ቀበሌ 02", "ቀበሌ 02", "Kebele 02", "KA-WUKRO", 2600),
+        new("KA-WUKRO-03", "ቀበሌ 03", "ቀበሌ 03", "Kebele 03", "KA-WUKRO", 2400),
+        new("KA-WUKRO-04", "ቀበሌ 04", "ቀበሌ 04", "Kebele 04", "KA-WUKRO", 2300),
+        new("KA-WUKRO-05", "ቀበሌ 05", "ቀበሌ 05", "Kebele 05", "KA-WUKRO", 2400),
+
+        // Chele Tabia
+        new("KA-CHELE-01", "ጨሌ", "ቼሌ", "Chele", "KA-CHELE", 2700),
+        new("KA-CHELE-02", "ማይ ሃዝና", "ማይ ሃዝና", "May Hazna", "KA-CHELE", 2200),
+        new("KA-CHELE-03", "ዓዲ ጉናድ", "ዓዲ ጉናድ", "Adi Gunad", "KA-CHELE", 1900),
+
+        // Dera Tabia
+        new("KA-DERA-01", "ዴራ", "ዴራ", "Dera", "KA-DERA", 2400),
+        new("KA-DERA-02", "ቅዳነ ምሕረት", "ቅዳነ ምሕረት", "Kidane Mihret", "KA-DERA", 2000),
+        new("KA-DERA-03", "ማይ ውቕሮ", "ማይ ውቕሮ", "May Wukro", "KA-DERA", 1500),
+
+        // Endahwukro Tabia
+        new("KA-ENDRA-01", "እንዳሁውቕሮ", "እንዳሁውቕሮ", "Endahwukro", "KA-ENDAHWUKRO", 2600),
+        new("KA-ENDRA-02", "ብራህ", "ብራህ", "Brah", "KA-ENDAHWUKRO", 2100),
+        new("KA-ENDRA-03", "ዓሽም", "ዓሽም", "Ashim", "KA-ENDAHWUKRO", 1700),
+
+        // Genfel Tabia
+        new("KA-GENFEL-01", "ገንፈል", "ገንፈል", "Genfel", "KA-GENFEL", 2200),
+        new("KA-GENFEL-02", "ሓውዜን", "ሓውዜን", "Hawzen", "KA-GENFEL", 1800),
+        new("KA-GENFEL-03", "ሰልዕ", "ሰልዕ", "Sele", "KA-GENFEL", 1500),
+
+        // Hareza Tabia
+        new("KA-HAREZA-01", "ሓረዛ", "ሓረዛ", "Hareza", "KA-HAREZA", 2500),
+        new("KA-HAREZA-02", "ዓዲ ዳኤሮ", "ዓዲ ዳኤሮ", "Adi Daero", "KA-HAREZA", 2000),
+        new("KA-HAREZA-03", "ማይ ሚቲ", "ማይ ሚቲ", "May Miti", "KA-HAREZA", 1600),
+        new("KA-HAREZA-04", "ዓዲ ግራት", "ዓዲ ግራት", "Adi Grat", "KA-HAREZA", 1000),
+
+        // Shibdih Tabia
+        new("KA-SHIBDIH-01", "ሽብዲህ", "ሽብዲህ", "Shibdih", "KA-SHIBDIH", 2500),
+        new("KA-SHIBDIH-02", "ሕርሃር", "ሕርሃር", "Hirhar", "KA-SHIBDIH", 2000),
+        new("KA-SHIBDIH-03", "ዓዲ መሓሪ", "ዓዲ መሓሪ", "Adi Mehari", "KA-SHIBDIH", 1700),
+
+        // Tsaeda Tabia
+        new("KA-TSAEDA-01", "ጻዕዳ እምባ", "ጻዕዳ እምባ", "Tsaeda Emba", "KA-TSAEDA", 2300),
+        new("KA-TSAEDA-02", "ማይ ስኣን", "ማይ ስኣን", "May Sean", "KA-TSAEDA", 1700),
+        new("KA-TSAEDA-03", "ዓዲ አብዬ", "ዓዲ አብዬ", "Adi Abye", "KA-TSAEDA", 1400),
+
+        // Zaba Tabia
+        new("KA-ZABA-01", "ዛባ ጉና", "ዛባ ጉና", "Zaba Guna", "KA-ZABA", 2400),
+        new("KA-ZABA-02", "ዓዲ ሃገር", "ዓዲ ሃገር", "Adi Hager", "KA-ZABA", 1600)
+    };
+
+    private TabiaModel? SelectedTabia => Tabias.FirstOrDefault(t => t.Code == TabiaCode);
+    private KushetModel? SelectedKushet => Kushets.FirstOrDefault(k => k.Code == KushetCode);
+    private IEnumerable<KushetModel> FilteredKushets =>
+        string.IsNullOrEmpty(TabiaCode) ? Enumerable.Empty<KushetModel>() : Kushets.Where(k => k.TabiaCode == TabiaCode);
+
+    private async Task OnTabiaChanged(ChangeEventArgs e)
+    {
+        TabiaCode = e.Value?.ToString();
+        // Clear kushet when tabia changes
+        KushetCode = null;
+        await TabiaCodeChanged.InvokeAsync(TabiaCode);
+        await KushetCodeChanged.InvokeAsync(KushetCode);
+    }
+
+    private async Task OnKushetChanged(ChangeEventArgs e)
+    {
+        KushetCode = e.Value?.ToString();
+        await KushetCodeChanged.InvokeAsync(KushetCode);
+    }
+
+    private async Task OnGottChanged(ChangeEventArgs e)
+    {
+        Gott = e.Value?.ToString();
+        await GottChanged.InvokeAsync(Gott);
+    }
+
+    private string GetTabiaName(TabiaModel tabia)
+    {
+        return Language switch
+        {
+            "ti" => tabia.NameTigrinya,
+            "am" => tabia.NameAmharic,
+            "en" => tabia.NameEnglish,
+            _ => tabia.NameTigrinya
+        };
+    }
+
+    private string GetKushetName(KushetModel kushet)
+    {
+        return Language switch
+        {
+            "ti" => kushet.NameTigrinya,
+            "am" => kushet.NameAmharic,
+            "en" => kushet.NameEnglish,
+            _ => kushet.NameTigrinya
+        };
+    }
+
+    private string GetLabel(string key)
+    {
+        return (Language, key) switch
+        {
+            ("ti", "Woreda") => "ወረዳ",
+            ("ti", "Tabia") => "ታብያ",
+            ("ti", "Kushet") => "ኩሸት",
+            ("ti", "Gott") => "ጎጥ",
+            ("ti", "SelectTabia") => "ታብያ ምረጽ",
+            ("ti", "SelectKushet") => "ኩሸት ምረጽ",
+            ("ti", "SelectTabiaFirst") => "መጀመሪያ ታብያ ምረጽ",
+            ("ti", "Optional") => "(ኣማራጺ)",
+            ("ti", "GottPlaceholder") => "ጎጥ / መንደር",
+            ("ti", "Population") => "ህዝቢ",
+
+            ("am", "Woreda") => "ወረዳ",
+            ("am", "Tabia") => "ታብያ",
+            ("am", "Kushet") => "ኩሸት",
+            ("am", "Gott") => "ጎጥ",
+            ("am", "SelectTabia") => "ታብያ ይምረጡ",
+            ("am", "SelectKushet") => "ኩሸት ይምረጡ",
+            ("am", "SelectTabiaFirst") => "መጀመሪያ ታብያ ይምረጡ",
+            ("am", "Optional") => "(አማራጭ)",
+            ("am", "GottPlaceholder") => "ጎጥ / መንደር",
+            ("am", "Population") => "ህዝብ",
+
+            (_, "Woreda") => "Woreda",
+            (_, "Tabia") => "Tabia",
+            (_, "Kushet") => "Kushet",
+            (_, "Gott") => "Gott",
+            (_, "SelectTabia") => "Select Tabia",
+            (_, "SelectKushet") => "Select Kushet",
+            (_, "SelectTabiaFirst") => "Select Tabia first",
+            (_, "Optional") => "(optional)",
+            (_, "GottPlaceholder") => "Gott / Sub-village",
+            (_, "Population") => "Population",
+            _ => key
+        };
+    }
+
+    // Models
+    private record TabiaModel(string Code, string NameTigrinya, string NameAmharic, string NameEnglish, int PopulationEstimate);
+    private record KushetModel(string Code, string NameTigrinya, string NameAmharic, string NameEnglish, string TabiaCode, int PopulationEstimate);
+}
+
+<style>
+    .location-picker {
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 0.375rem;
+        border: 1px solid #dee2e6;
+    }
+
+    .location-picker .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .location-picker .text-muted {
+        font-size: 0.75rem;
+    }
+
+    @media (max-width: 768px) {
+        .location-picker {
+            padding: 0.75rem;
+        }
+    }
+</style>
