@@ -1,0 +1,588 @@
+@page "/match"
+@using PremiumMatcher.Web.Services
+@using PremiumMatcher.Web.Components
+@inject ApiClient Api
+@inject AppConfig AppCfg
+
+<PageTitle>Record Matching - Ethiopian HDSS</PageTitle>
+
+<div class="container-fluid mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>
+            @if (currentLanguage == "ti")
+            {
+                <text>መዝገብ ምትእስሳር</text>
+            }
+            else if (currentLanguage == "am")
+            {
+                <text>መዝገብ ማመሳሰል</text>
+            }
+            else
+            {
+                <text>Record Matching</text>
+            }
+        </h3>
+        <LanguageSwitcher @bind-CurrentLanguage="currentLanguage" OnLanguageChange="OnLanguageChanged" />
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">@GetLabel("SearchCriteria")</h5>
+        </div>
+        <div class="card-body">
+            <EditForm Model="search" OnValidSubmit="RunSearch">
+                <DataAnnotationsValidator />
+
+                @* Ethiopian Name Fields (Given, Father's, Grandfather's) *@
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">
+                            @GetLabel("GivenName")
+                            <span class="text-muted small">(ስም / ስም ዝኽሪ)</span>
+                        </label>
+                        <InputText class="form-control" @bind-Value="search.FirstName" placeholder="@GetLabel("GivenName")" />
+                        <div class="form-check mt-1">
+                            <InputCheckbox class="form-check-input" @bind-Value="search.UseFirstName" id="useFirstName" />
+                            <label class="form-check-label small" for="useFirstName">@GetLabel("UseGivenName")</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">
+                            @GetLabel("FatherName")
+                            <span class="text-muted small">(የአባት ስም / ስም አቦ)</span>
+                        </label>
+                        <InputText class="form-control" @bind-Value="search.MiddleName" placeholder="@GetLabel("FatherName")" />
+                        <div class="form-check mt-1">
+                            <InputCheckbox class="form-check-input" @bind-Value="search.UseMiddleName" id="useMiddleName" />
+                            <label class="form-check-label small" for="useMiddleName">@GetLabel("UseFatherName")</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">
+                            @GetLabel("GrandfatherName")
+                            <span class="text-muted small">(የአያት ስም / ስም ኣያት)</span>
+                        </label>
+                        <InputText class="form-control" @bind-Value="search.LastName" placeholder="@GetLabel("GrandfatherName")" />
+                        <div class="form-check mt-1">
+                            <InputCheckbox class="form-check-input" @bind-Value="search.UseLastName" id="useLastName" />
+                            <label class="form-check-label small" for="useLastName">@GetLabel("UseGrandfatherName")</label>
+                        </div>
+                    </div>
+                </div>
+
+                @* Gender *@
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">@GetLabel("Gender")</label>
+                        <InputSelect class="form-select" @bind-Value="search.Gender">
+                            <option value="">@GetLabel("SelectGender")</option>
+                            <option value="M">@GetLabel("Male")</option>
+                            <option value="F">@GetLabel("Female")</option>
+                        </InputSelect>
+                        <div class="form-check mt-1">
+                            <InputCheckbox class="form-check-input" @bind-Value="search.UseGender" id="useGender" />
+                            <label class="form-check-label small" for="useGender">@GetLabel("UseGender")</label>
+                        </div>
+                    </div>
+                </div>
+
+                @* Ethiopian Date Picker Component *@
+                <div class="mb-3">
+                    <label class="form-label fw-bold">@GetLabel("DateOfBirth")</label>
+                    <EthiopianDatePicker
+                        @bind-Day="search.BDay"
+                        @bind-Month="search.BMonth"
+                        @bind-Year="search.BYear"
+                        CalendarType="@calendarType"
+                        @bind-CalendarType="calendarType"
+                        Language="@currentLanguage"
+                        @bind-AgeOnly="ageOnlyMode" />
+                    <div class="form-check mt-2">
+                        <InputCheckbox class="form-check-input" @bind-Value="search.UseBYear" id="useBYear" />
+                        <label class="form-check-label small" for="useBYear">@GetLabel("UseBirthYear")</label>
+                    </div>
+                </div>
+
+                @* Location Picker Component *@
+                <div class="mb-3">
+                    <label class="form-label fw-bold">@GetLabel("Location")</label>
+                    <LocationPicker
+                        @bind-TabiaCode="tabiaCode"
+                        @bind-KushetCode="kushetCode"
+                        @bind-Gott="gottName"
+                        Language="@currentLanguage" />
+                    <div class="form-check mt-2">
+                        <InputCheckbox class="form-check-input" @bind-Value="useLocation" id="useLocation" />
+                        <label class="form-check-label small" for="useLocation">@GetLabel("UseLocation")</label>
+                    </div>
+                </div>
+
+                @* Search Button *@
+                <div class="mt-4">
+                    <button class="btn btn-primary btn-lg" type="submit" disabled="@loading">
+                        <i class="bi bi-search me-2"></i>
+                        @(loading ? GetLabel("Searching") : GetLabel("Search"))
+                    </button>
+                    @if (candidates?.Any() == true)
+                    {
+                        <button class="btn btn-outline-secondary btn-lg ms-2" type="button" @onclick="ClearSearch">
+                            <i class="bi bi-x-circle me-2"></i>
+                            @GetLabel("Clear")
+                        </button>
+                    }
+                </div>
+            </EditForm>
+        </div>
+    </div>
+
+    @* Error Message *@
+    @if (error is not null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @error
+            <button type="button" class="btn-close" @onclick="(() => error = null)"></button>
+        </div>
+    }
+
+    @* Search Results *@
+    @if (candidates?.Any() == true)
+    {
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    @GetLabel("SearchResults"): @candidates.Count @GetLabel("CandidatesFound")
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>@GetLabel("DssId")</th>
+                                <th>@GetLabel("Name")</th>
+                                <th>@GetLabel("Gender")</th>
+                                <th>@GetLabel("BirthYear")</th>
+                                <th>@GetLabel("Location")</th>
+                                <th>@GetLabel("Score")</th>
+                                <th>@GetLabel("NameScore")</th>
+                                <th>@GetLabel("Rank")</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in candidates!.OrderByDescending(x => x.score))
+                            {
+                                <tr class="@(selected?.dssId == c.dssId ? "table-primary" : string.Empty)">
+                                    <td><code>@c.dssId</code></td>
+                                    <td>
+                                        <strong>@c.firstName</strong> @c.middleName @c.lastName
+                                    </td>
+                                    <td>
+                                        <span class="badge @(c.gender == "M" ? "bg-info" : "bg-warning")">
+                                            @(c.gender == "M" ? GetLabel("Male") : GetLabel("Female"))
+                                        </span>
+                                    </td>
+                                    <td>@c.birthYear</td>
+                                    <td><small>@c.location</small></td>
+                                    <td>
+                                        <span class="badge @GetScoreBadgeClass(c.score)">
+                                            @c.score.ToString("0.000")
+                                        </span>
+                                    </td>
+                                    <td>@c.nameScore.ToString("0.000")</td>
+                                    <td>#@c.rankNoGap</td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm" @onclick="(() => SelectCandidate(c))">
+                                            @GetLabel("Select")
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else if (candidates is not null && !candidates.Any())
+    {
+        <div class="alert alert-warning" role="alert">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            @GetLabel("NoResults")
+        </div>
+    }
+
+    @* Match Assignment *@
+    @if (selected is not null)
+    {
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">@GetLabel("AssignMatch")</h5>
+            </div>
+            <div class="card-body">
+                @if (warnText is not null)
+                {
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        @warnText
+                    </div>
+                }
+
+                <div class="card mb-3 bg-light">
+                    <div class="card-body">
+                        <h6>@GetLabel("SelectedCandidate"):</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>@GetLabel("DssId"):</strong> <code>@selected.dssId</code></li>
+                            <li><strong>@GetLabel("Name"):</strong> @selected.firstName @selected.middleName @selected.lastName</li>
+                            <li><strong>@GetLabel("Score"):</strong> <span class="badge @GetScoreBadgeClass(selected.score)">@selected.score.ToString("0.000")</span></li>
+                            <li><strong>@GetLabel("Location"):</strong> @selected.location</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <EditForm Model="assign" OnValidSubmit="DoAssign">
+                    <div class="row g-3 mb-3">
+                        @* Health Facility Selector (Kilte Awlalo) *@
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">@GetLabel("HealthFacility") <span class="text-danger">*</span></label>
+                            <select class="form-select" @bind="assign.Facility" required>
+                                <option value="">@GetLabel("SelectFacility")</option>
+                                <optgroup label="@GetLabel("GeneralHospital")">
+                                    <option value="WGH-001">@GetFacilityName("WGH-001")</option>
+                                </optgroup>
+                                <optgroup label="@GetLabel("HealthCenter")">
+                                    <option value="HC-AGBE">@GetFacilityName("HC-AGBE")</option>
+                                    <option value="HC-WUKRO">@GetFacilityName("HC-WUKRO")</option>
+                                    <option value="HC-CHELE">@GetFacilityName("HC-CHELE")</option>
+                                    <option value="HC-HAREZA">@GetFacilityName("HC-HAREZA")</option>
+                                    <option value="HC-ENDRA">@GetFacilityName("HC-ENDRA")</option>
+                                </optgroup>
+                                <optgroup label="@GetLabel("HealthPost")">
+                                    <option value="HP-AGBE">@GetFacilityName("HP-AGBE")</option>
+                                    <option value="HP-WUKRO">@GetFacilityName("HP-WUKRO")</option>
+                                    <option value="HP-CHELE">@GetFacilityName("HP-CHELE")</option>
+                                    <option value="HP-DERA">@GetFacilityName("HP-DERA")</option>
+                                    <option value="HP-ENDRA">@GetFacilityName("HP-ENDRA")</option>
+                                    <option value="HP-GENFEL">@GetFacilityName("HP-GENFEL")</option>
+                                    <option value="HP-HAREZA">@GetFacilityName("HP-HAREZA")</option>
+                                    <option value="HP-SHIBDIH">@GetFacilityName("HP-SHIBDIH")</option>
+                                    <option value="HP-TSAEDA">@GetFacilityName("HP-TSAEDA")</option>
+                                    <option value="HP-ZABA">@GetFacilityName("HP-ZABA")</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">@GetLabel("RecordNumber") <span class="text-danger">*</span></label>
+                            <InputText class="form-control" @bind-Value="assign.RecordNo" placeholder="@GetLabel("RecordNumber")" required />
+                        </div>
+                    </div>
+
+                    @* Ethiopian Health IDs *@
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">@GetLabel("MrnNumber")</label>
+                            <InputText class="form-control" @bind-Value="assign.UniqueCTCIDNumber" placeholder="@GetLabel("MrnNumber")" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">@GetLabel("ArtNumber")</label>
+                            <InputText class="form-control" @bind-Value="assign.TgrFormNumber" placeholder="@GetLabel("ArtNumber")" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">@GetLabel("TbNumber")</label>
+                            <InputText class="form-control" @bind-Value="assign.FileRef" placeholder="@GetLabel("TbNumber")" />
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">@GetLabel("AncNumber")</label>
+                            <InputText class="form-control" @bind-Value="assign.UniqueANC" placeholder="@GetLabel("AncNumber")" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">@GetLabel("PmtctId")</label>
+                            <InputText class="form-control" @bind-Value="assign.UniqueHTC" placeholder="@GetLabel("PmtctId")" />
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button class="btn btn-success btn-lg" type="submit" disabled="@assigning">
+                            <i class="bi bi-check-circle me-2"></i>
+                            @(assigning ? GetLabel("Assigning") : GetLabel("AssignMatch"))
+                        </button>
+                        <button class="btn btn-outline-secondary btn-lg ms-2" type="button" @onclick="CancelAssignment">
+                            <i class="bi bi-x-circle me-2"></i>
+                            @GetLabel("Cancel")
+                        </button>
+                    </div>
+
+                    @if (assignResult is not null)
+                    {
+                        <div class="alert alert-success mt-3" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            @assignResult
+                        </div>
+                    }
+                </EditForm>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    // State
+    private ApiClient.SearchRequest search = new();
+    private List<ApiClient.Candidate>? candidates;
+    private ApiClient.Candidate? selected;
+    private ApiClient.AssignMatchRequest assign = new();
+    private bool loading = false;
+    private bool assigning = false;
+    private string? error;
+    private string? warnText;
+    private string? assignResult;
+    private PremiumMatcher.Web.Services.AppSettings? cfg;
+
+    // Language & Calendar
+    private string currentLanguage = "ti"; // Default to Tigrinya
+    private string calendarType = "Ethiopian"; // Default to Ethiopian calendar
+    private bool ageOnlyMode = false;
+
+    // Location (from LocationPicker)
+    private string? tabiaCode;
+    private string? kushetCode;
+    private string? gottName;
+    private bool useLocation = false;
+
+    // Kilte Awlalo Facilities (trilingual)
+    private Dictionary<string, (string Tigrinya, string Amharic, string English)> facilities = new()
+    {
+        ["WGH-001"] = ("ሓፈሻዊ ሆስፒታል ውቕሮ", "የውቕሮ ሓፈሻዊ ሆስፒታል", "Wukro General Hospital"),
+        ["HC-AGBE"] = ("ማእከል ጥዕና ኣግበ", "የኣግበ ጤና ማዕከል", "Agbe Health Center"),
+        ["HC-WUKRO"] = ("ማእከል ጥዕና ውቕሮ", "የውቕሮ ጤና ማዕከል", "Wukro Town Health Center"),
+        ["HC-CHELE"] = ("ማእከል ጥዕና ጨሌ", "የቼሌ ጤና ማዕከል", "Chele Health Center"),
+        ["HC-HAREZA"] = ("ማእከል ጥዕና ሓረዛ", "የሓረዛ ጤና ማዕከል", "Hareza Health Center"),
+        ["HC-ENDRA"] = ("ማእከል ጥዕና እንዳሁውቕሮ", "የእንዳሁውቕሮ ጤና ማዕከል", "Endahwukro Health Center"),
+        ["HP-AGBE"] = ("ጣብያ ጥዕና ኣግበ", "የኣግበ ጤና ጣቢያ", "Agbe Health Post"),
+        ["HP-WUKRO"] = ("ጣብያ ጥዕና ውቕሮ", "የውቕሮ ጤና ጣቢያ", "Wukro Health Post"),
+        ["HP-CHELE"] = ("ጣብያ ጥዕና ጨሌ", "የቼሌ ጤና ጣቢያ", "Chele Health Post"),
+        ["HP-DERA"] = ("ጣብያ ጥዕና ዴራ", "የዴራ ጤና ጣቢያ", "Dera Health Post"),
+        ["HP-ENDRA"] = ("ጣብያ ጥዕና እንዳሁውቕሮ", "የእንዳሁውቕሮ ጤና ጣቢያ", "Endahwukro Health Post"),
+        ["HP-GENFEL"] = ("ጣብያ ጥዕና ገንፈል", "የገንፈል ጤና ጣቢያ", "Genfel Health Post"),
+        ["HP-HAREZA"] = ("ጣብያ ጥዕና ሓረዛ", "የሓረዛ ጤና ጣቢያ", "Hareza Health Post"),
+        ["HP-SHIBDIH"] = ("ጣብያ ጥዕና ሽብዲህ", "የሽብዲህ ጤና ጣቢያ", "Shibdih Health Post"),
+        ["HP-TSAEDA"] = ("ጣብያ ጥዕና ጻዕዳ", "የጻዕዳ ጤና ጣቢያ", "Tsaeda Health Post"),
+        ["HP-ZABA"] = ("ጣብያ ጥዕና ዛባ", "የዛባ ጤና ጣቢያ", "Zaba Health Post")
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        cfg = await AppCfg.GetAsync();
+    }
+
+    private async Task OnLanguageChanged(string newLanguage)
+    {
+        currentLanguage = newLanguage;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task RunSearch()
+    {
+        loading = true; error = null; candidates = null; selected = null; warnText = null; assignResult = null;
+
+        // Map location data if used
+        if (useLocation)
+        {
+            search.Village = tabiaCode; // Store Tabia code in Village field
+            search.SubVillage = kushetCode; // Store Kushet code in SubVillage field
+        }
+
+        try
+        {
+            candidates = await Api.SearchAsync(search);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally { loading = false; }
+    }
+
+    private void ClearSearch()
+    {
+        candidates = null;
+        selected = null;
+        error = null;
+        warnText = null;
+        assignResult = null;
+    }
+
+    private void SelectCandidate(ApiClient.Candidate c)
+    {
+        selected = c;
+        BuildAssignModel();
+        ComputeWarnings();
+    }
+
+    private void CancelAssignment()
+    {
+        selected = null;
+        assign = new();
+        warnText = null;
+        assignResult = null;
+    }
+
+    private void BuildAssignModel()
+    {
+        if (selected is null) return;
+        var criteria = BuildSearchCriteria();
+        assign.DssId = selected.dssId;
+        assign.Score = selected.score;
+        assign.RankGap = selected.rankGap;
+        assign.RankNoGap = selected.rankNoGap;
+        assign.RowNumber = selected.rowNumber;
+        assign.SearchCriteria = criteria;
+    }
+
+    private string BuildSearchCriteria()
+    {
+        var parts = new List<string>();
+        if (search.UseFirstName) parts.Add(GetLabel("GivenName"));
+        if (search.UseMiddleName) parts.Add(GetLabel("FatherName"));
+        if (search.UseLastName) parts.Add(GetLabel("GrandfatherName"));
+        if (search.UseGender) parts.Add(GetLabel("Gender"));
+        if (search.UseBYear) parts.Add(GetLabel("BirthYear"));
+        if (useLocation) parts.Add(GetLabel("Location"));
+        return string.Join(", ", parts);
+    }
+
+    private void ComputeWarnings()
+    {
+        warnText = null;
+        if (selected is null || cfg is null) return;
+        if (selected.nameScore <= cfg.LowNameScoreThreshold)
+        {
+            warnText = (warnText is null ? string.Empty : warnText + " ") + GetLabel("LowNameScoreWarning");
+        }
+        if (int.TryParse(selected.birthYear ?? "", out var by) && int.TryParse(search.BYear ?? "", out var sy))
+        {
+            if (Math.Abs(by - sy) > cfg.BirthYearGapWarn)
+                warnText = (warnText is null ? string.Empty : warnText + " ") + GetLabel("BirthYearGapWarning");
+        }
+    }
+
+    private async Task DoAssign()
+    {
+        if (selected is null) return;
+        assigning = true; assignResult = null; error = null;
+        try
+        {
+            var existsReq = new ApiClient.StatusRequest(assign.Facility, assign.UniqueCTCIDNumber, assign.TgrFormNumber, assign.FileRef, assign.CtcInfant, assign.UniqueHTC, assign.UniqueANC, assign.AncInfant, assign.HeidInfant);
+            var exists = await Api.ExistsAsync(existsReq);
+            if (exists)
+            {
+                assignResult = GetLabel("DuplicateWarning");
+                return;
+            }
+            var id = await Api.AssignMatchAsync(assign);
+            assignResult = string.Format(GetLabel("MatchAssigned"), id);
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally { assigning = false; }
+    }
+
+    private string GetFacilityName(string code)
+    {
+        if (!facilities.ContainsKey(code)) return code;
+        var (ti, am, en) = facilities[code];
+        return currentLanguage switch
+        {
+            "ti" => ti,
+            "am" => am,
+            _ => en
+        };
+    }
+
+    private string GetScoreBadgeClass(double score)
+    {
+        if (score >= 0.8) return "bg-success";
+        if (score >= 0.6) return "bg-warning";
+        return "bg-danger";
+    }
+
+    private string GetLabel(string key)
+    {
+        // TODO: Load from resource files (Match.ti.resx, Match.am.resx, Match.en.resx)
+        // For now, return basic translations
+        return (currentLanguage, key) switch
+        {
+            ("ti", "SearchCriteria") => "መዘለኽ ትሕዝቶ ምድላይ",
+            ("ti", "GivenName") => "ስም",
+            ("ti", "FatherName") => "ስም አቦ",
+            ("ti", "GrandfatherName") => "ስም ኣያት",
+            ("ti", "UseGivenName") => "ስም ተጠቐም",
+            ("ti", "UseFatherName") => "ስም አቦ ተጠቐም",
+            ("ti", "UseGrandfatherName") => "ስም ኣያት ተጠቐም",
+            ("ti", "Gender") => "ፆታ",
+            ("ti", "SelectGender") => "ፆታ ምረጽ",
+            ("ti", "Male") => "ተባዕታይ",
+            ("ti", "Female") => "ኣንስታይ",
+            ("ti", "UseGender") => "ፆታ ተጠቐም",
+            ("ti", "DateOfBirth") => "መዓልቲ ልደት",
+            ("ti", "UseBirthYear") => "ዓመተ ልደት ተጠቐም",
+            ("ti", "Location") => "ቦታ",
+            ("ti", "UseLocation") => "ቦታ ተጠቐም",
+            ("ti", "Search") => "ድለ",
+            ("ti", "Searching") => "በምድላይ ኣሎ…",
+            ("ti", "Clear") => "ጽርግያ",
+            ("ti", "SearchResults") => "ውጽኢት ምድላይ",
+            ("ti", "CandidatesFound") => "ተወዳደርቲ ተረኺቦም",
+            ("ti", "DssId") => "መለለዪ DSS",
+            ("ti", "Name") => "ስም",
+            ("ti", "BirthYear") => "ዓመተ ልደት",
+            ("ti", "Score") => "ውጽኢት",
+            ("ti", "NameScore") => "ውጽኢት ስም",
+            ("ti", "Rank") => "ደረጃ",
+            ("ti", "Select") => "ምረጽ",
+            ("ti", "NoResults") => "ውጽኢት የለን",
+            ("ti", "AssignMatch") => "ማዕሪ ምደብ",
+            ("ti", "SelectedCandidate") => "ዝተመረጸ ተወዳዳሪ",
+            ("ti", "HealthFacility") => "ናይ ጥዕና ትካል",
+            ("ti", "SelectFacility") => "ትካል ምረጽ",
+            ("ti", "GeneralHospital") => "ሓፈሻዊ ሆስፒታል",
+            ("ti", "HealthCenter") => "ማእከል ጥዕና",
+            ("ti", "HealthPost") => "ጣብያ ጥዕና",
+            ("ti", "RecordNumber") => "ቁ. መዝገብ",
+            ("ti", "MrnNumber") => "ቁ. MRN",
+            ("ti", "ArtNumber") => "ቁ. ART",
+            ("ti", "TbNumber") => "ቁ. ምዝገባ ሳንባ ነቀርሳ",
+            ("ti", "AncNumber") => "ቁ. ANC",
+            ("ti", "PmtctId") => "መለለዪ PMTCT",
+            ("ti", "Assigning") => "በምምዳብ ኣሎ…",
+            ("ti", "Cancel") => "ስረዝ",
+            ("ti", "LowNameScoreWarning") => "ውሑድ ውጽኢት ስም - ቅድሚ ምቕጻልካ ኣረጋግጽ።",
+            ("ti", "BirthYearGapWarning") => "ልዩነት ዓመተ ልደት ብዙሕ እዩ።",
+            ("ti", "DuplicateWarning") => "እዚ መለለዪ ናይ ክሊኒክ ቅድሚ ሕጂ ኣሎ።",
+            ("ti", "MatchAssigned") => "ማዕሪ ተመዲቡ (መለለዪ={0})።",
+
+            // Amharic translations
+            ("am", "SearchCriteria") => "የፍለጋ መስፈርቶች",
+            ("am", "GivenName") => "የመጀመሪያ ስም",
+            ("am", "FatherName") => "የአባት ስም",
+            ("am", "GrandfatherName") => "የአያት ስም",
+            ("am", "Gender") => "ጾታ",
+            ("am", "Male") => "ወንድ",
+            ("am", "Female") => "ሴት",
+            ("am", "Search") => "ፈልግ",
+            ("am", "Searching") => "በመፈለግ ላይ…",
+
+            // English defaults
+            _ => key
+        };
+    }
+}

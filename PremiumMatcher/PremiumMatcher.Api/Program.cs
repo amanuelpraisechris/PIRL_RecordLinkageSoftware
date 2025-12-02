@@ -1,6 +1,7 @@
 using Microsoft.Data.SqlClient; // kept if later needed
 using Npgsql;
 using System.Data;
+using PremiumMatcher.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -236,6 +237,9 @@ app.MapPost("/api/match-status", async (MatchStatusRequest req) =>
 
     return Results.Ok(new MatchStatusResponse("", null));
 });
+
+// Kilte Awlalo HDSS location endpoints
+app.MapKilteAwlaloEndpoints(dataSource);
 
 app.Run();
 
